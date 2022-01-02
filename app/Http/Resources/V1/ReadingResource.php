@@ -19,6 +19,7 @@ class ReadingResource extends JsonResource
             'id' => $this->id,
             'reading' => $this->reading,
             'read_at' => $this->read_at,
+            'type' => $this->type,
         ];
     }
 }

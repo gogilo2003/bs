@@ -10,24 +10,14 @@
 
                         <div class="card-body">
                             <div class="mb-3">
-                                <date-picker
-                                    v-model="read_at"
-                                    :config="options"
-                                ></date-picker>
-                            </div>
-                            <div class="mb-3">
                                 <label for="dateInput" class="form-label"
                                     >Date</label
                                 >
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    name="dateInput"
+                                <date-picker
                                     id="dateInput"
-                                    aria-describedby="helpId"
-                                    placeholder="Date"
                                     v-model="read_at"
-                                />
+                                    :config="options"
+                                ></date-picker>
                             </div>
                             <div class="mb-3">
                                 <label for="typeInput" class="form-label"
@@ -81,16 +71,18 @@ export default {
             read_at: new Date(),
             type: "fbs",
             options: {
-                fontAwesome: true,
+                inline: false,
+                sideBySide: true,
+                format: "YYYY-MM-DD HH:mm:ss",
                 icons: {
-                    time: "fa fa-clock-o",
-                    date: "fa fa-calendar",
+                    time: "far fa-clock",
+                    date: "fas fa-calendar-alt",
                     up: "fa fa-arrow-up",
                     down: "fa fa-arrow-down",
                     previous: "fa fa-chevron-left",
                     next: "fa fa-chevron-right",
-                    today: "fa fa-clock-o",
-                    clear: "fa fa-trash-o",
+                    today: "far fa-clock",
+                    clear: "fas fa-trash-alt",
                 },
             },
         };
@@ -109,7 +101,12 @@ export default {
                     this.$router.push("/");
                 })
                 .catch((error) => {
-                    console.log(error);
+                    console.log(error.response.data);
+                    if (error.response.status == 415) {
+                        error.response.data.details.forEach((element) => {
+                            console.log(element);
+                        });
+                    }
                 });
         },
     },

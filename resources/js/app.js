@@ -15,7 +15,7 @@ import router from './routes'
 
 import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
 import 'vue-good-table/dist/vue-good-table.css'
-import '@fortawesome/fontawesome-svg-core/styles.css'
+import '@fortawesome/fontawesome-free/css/all.min.css'
 
 Vue.component('navbar', require('./components/Navbar.vue').default);
 
