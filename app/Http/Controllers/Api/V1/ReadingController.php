@@ -8,7 +8,9 @@ use Ogilo\ApiResponseHelpers;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\ReadingResource;
+use DateTime;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\Translation\Loader\CsvFileLoader;
 
 class ReadingController extends Controller
 {
@@ -20,7 +22,7 @@ class ReadingController extends Controller
      */
     public function index()
     {
-        return ReadingResource::collection(Reading::all());
+        return ReadingResource::collection(Reading::orderBy('read_at', 'DESC')->get());
     }
 
     /**
@@ -119,5 +121,39 @@ class ReadingController extends Controller
 
         Reading::destroy($id);
         return $this->deleteSuccess();
+    }
+
+    /**
+     * Upload a and process CSV file containing readings data in the format read_at, type, reading
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function import(Request $request)
+    {
+        // die((new DateTime('Thu 5-Aug-2021 10:30'))->format('Y-m-d H:i:s'));
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file|mimetypes:text/plain|mimes:csv,txt'
+        ]);
+        if ($validator->fails()) {
+            return $this->validationError($validator);
+        }
+
+        $file = $request->file;
+        collect(array_map('str_getcsv', file($file->getRealPath())))->each(function ($item) {
+            $reading = new Reading();
+            $read_at = new DateTime($item[0]);
+
+            if ($read_at->format('H:i:s') === '00:00:00') {
+                $read_at->setTime(6, 30);
+            }
+            if (!empty(trim($item[2]))) {
+                $reading->read_at = $read_at->format('Y-m-d H:i:s');
+                $reading->type = empty(trim($item[1])) ? 'fbs' : $item[1];
+                $reading->reading = $item[2];
+                auth()->user()->readings()->save($reading);
+            }
+        });
+
+        return $this->respondWithSuccess('File uploaded');
     }
 }

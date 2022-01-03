@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import LoginVue from "../pages/Login.vue";
 import ReadingsVue from "../pages/Readings.vue";
 import Reading from "../pages/Reading.vue";
+import Report from "../pages/Report.vue";
 
 Vue.use(VueRouter)
 
@@ -19,6 +20,13 @@ const router = new VueRouter({
         {
             path: "/reading",
             component: Reading,
+            meta: {
+                auth: true
+            }
+        },
+        {
+            path: "/report",
+            component: Report,
             meta: {
                 auth: true
             }

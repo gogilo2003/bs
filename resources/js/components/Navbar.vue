@@ -28,6 +28,11 @@
                         >
                     </li>
                     <li class="nav-item">
+                        <router-link class="nav-link" to="/report"
+                            >REPORT</router-link
+                        >
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#" @click="logout">LOGOUT</a>
                     </li>
                 </ul>

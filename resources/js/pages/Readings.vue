@@ -8,9 +8,18 @@
                     <vue-good-table
                         :columns="columns"
                         :rows="rows"
-                        max-height="calc(100vh - 55px)"
-                        pagination
-                        compactMode
+                        :pagination-options="{
+                            enabled: true,
+                            perPage: 5,
+                            rowsPerPageLabel: 'Per Page',
+                            nextLabel: 'NEXT',
+                            prevLabel: 'PREV',
+                            perPageDropdownEnabled: false,
+                        }"
+                        :compactMode="true"
+                        :sort-options="{ enabled: false }"
+                        theme="nocturnal"
+                        styleClass="vgt-table striped"
                     />
                 </div>
             </div>
@@ -31,6 +40,8 @@ export default {
                     type: "date",
                     dateInputFormat: "yyyy-MM-dd HH:mm:ss", // expects 2018-03-16
                     dateOutputFormat: "eee, d-MMM-yyyy h:mm:ss a", // outputs Mar 16th 2018
+                    tdClass: "text-start",
+                    thClass: "text-start",
                 },
                 {
                     label: "Type",
