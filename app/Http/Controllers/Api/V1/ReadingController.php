@@ -132,7 +132,7 @@ class ReadingController extends Controller
     {
         // die((new DateTime('Thu 5-Aug-2021 10:30'))->format('Y-m-d H:i:s'));
         $validator = Validator::make($request->all(), [
-            'file' => 'required|file|mimetypes:text/plain|mimes:csv,txt'
+            'file' => 'required|file|mimes:csv,txt'
         ]);
         if ($validator->fails()) {
             return $this->validationError($validator);
