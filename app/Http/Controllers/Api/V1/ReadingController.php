@@ -140,17 +140,20 @@ class ReadingController extends Controller
 
         $file = $request->file;
         collect(array_map('str_getcsv', file($file->getRealPath())))->each(function ($item) {
-            $reading = new Reading();
-            $read_at = new DateTime($item[0]);
+            try {
+                $reading = new Reading();
+                $read_at = new DateTime($item[0]);
 
-            if ($read_at->format('H:i:s') === '00:00:00') {
-                $read_at->setTime(6, 30);
-            }
-            if (!empty(trim($item[2]))) {
-                $reading->read_at = $read_at->format('Y-m-d H:i:s');
-                $reading->type = empty(trim($item[1])) ? 'fbs' : $item[1];
-                $reading->reading = $item[2];
-                auth()->user()->readings()->save($reading);
+                if ($read_at->format('H:i:s') === '00:00:00') {
+                    $read_at->setTime(6, 30);
+                }
+                if (!empty(trim($item[2]))) {
+                    $reading->read_at = $read_at->format('Y-m-d H:i:s');
+                    $reading->type = empty(trim($item[1])) ? 'fbs' : $item[1];
+                    $reading->reading = $item[2];
+                    auth()->user()->readings()->save($reading);
+                }
+            } catch (\Throwable $th) {
             }
         });
 

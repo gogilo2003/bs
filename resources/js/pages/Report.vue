@@ -1,35 +1,46 @@
 <template>
     <div class="container-fluid">
-        <div class="btn-toolbar" role="toolbar" aria-label="">
-            <div class="btn-group" role="group" aria-label="">
-                <button type="button" class="btn btn-outline-dark">
-                    TODAY
-                </button>
-                <button type="button" class="btn btn-outline-dark">
-                    THIS WEEK
-                </button>
-                <button type="button" class="btn btn-outline-dark">
-                    THIS MONTH
-                </button>
-            </div>
-        </div>
+
         <div class="card">
-            <div class="card-header"></div>
-            <table class="table table-striped">
+            <div class="card-header">
+                <div class="btn-toolbar" role="toolbar" aria-label="">
+                    <div class="btn-group" role="group" aria-label="">
+                        <button type="button" class="btn btn-outline-dark" @click="today">
+                            TODAY
+                        </button>
+                        <button type="button" class="btn btn-outline-dark" @click="thisWeek">
+                            THIS WEEK
+                        </button>
+                        <button type="button" class="btn btn-outline-dark" @click="thisMonth">
+                            THIS MONTH
+                        </button>
+                        <button type="button" class="btn btn-outline-dark" @click="reset">
+                            RESET
+                        </button>
+                        <button type="button" class="btn btn-outline-dark" @click="print">
+                            PRINT
+                        </button>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="card" ref="report">
+            <table class="table table-striped table-bordered">
                 <thead>
                     <th>
-                        <td>DATE</td>
-                        <td>TIME</td>
-                        <td>TYPE</td>
-                        <td>BS</td>
+                        <th>DATE</th>
+                        <th>TIME</th>
+                        <th>TYPE</th>
+                        <th>BS</th>
                     </th>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                    <tr v-for="(reading,i) in filter" :key="reading.id">
+                        <td v-text="i+1"></td>
+                        <td v-text="formatDate(reading.read_at)"></td>
+                        <td v-text="formatTime(reading.read_at)"></td>
+                        <td v-text="capitalize(reading.type)"></td>
+                        <td v-text="reading.reading"></td>
                     </tr>
                 </tbody>
             </table>
@@ -37,7 +48,101 @@
     </div>
 </template>
 <script>
+import { subWeeks, subMonths, isAfter } from "date-fns/fp";
 export default {
-    mounted() {},
+    data: () => {
+        return {
+            readings: [],
+            filter: [],
+        };
+    },
+    mounted() {
+        axios.get("/api/v1/readings").then((response) => {
+            this.readings = response.data.data;
+            this.reset();
+        });
+    },
+    methods: {
+        print() {
+            let win = window.open(
+                "",
+                "_blank",
+                "toolbar=0,location=0,menubar=0"
+            );
+            let css = require("../../css/app.css");
+            let style = `<style>${css.toString()}</style>`;
+            console.log(css.toString());
+            // style.innerHTML = css;
+            // win.document.write(style.toString());
+            // win.document.write(this.$refs.report.innerHTML);
+        },
+        reset() {
+            this.filter = this.readings;
+        },
+        today() {
+            this.filter = this.readings.filter(
+                (item) =>
+                    new Date(item.read_at).toDateString() ===
+                    new Date().toDateString()
+            );
+        },
+        thisWeek() {
+            let end = new Date();
+            let start = subWeeks(1, end);
+            start.setHours(0);
+            start.setMinutes(0);
+            start.setSeconds(0);
+            this.filter = this.readings.filter((item) =>
+                isAfter(start, new Date(item.read_at))
+            );
+        },
+        thisMonth() {
+            let end = new Date();
+            let start = subMonths(1, end);
+            start.setHours(0);
+            start.setMinutes(0);
+            start.setSeconds(0);
+            this.filter = this.readings.filter((item) =>
+                isAfter(start, new Date(item.read_at))
+            );
+        },
+        formatDate: (value) => {
+            const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+            const months = [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+            ];
+            let date = new Date(value);
+            return `${days[date.getDay()]} ${date.getDate()}-${
+                months[date.getMonth()]
+            }-${date.getFullYear()}`;
+        },
+        formatTime: (value) => {
+            let time = new Date(value);
+            var H = time.getHours();
+            var h = H % 12 || 12;
+            var ampm = H < 12 || H === 24 ? "AM" : "PM";
+
+            return `${h}:${time
+                .getMinutes()
+                .toString()
+                .padStart(2, "0")} ${ampm}`;
+        },
+        capitalize: (value) => {
+            if (!value) return "";
+            value = value.toString();
+            return value.toUpperCase();
+        },
+    },
 };
 </script>
