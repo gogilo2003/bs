@@ -33,7 +33,7 @@ Route::middleware('auth:sanctum')
             Route::post('', [ReadingController::class, 'store']);
             Route::patch('{id}', [ReadingController::class, 'update']);
             Route::delete('{id}', [ReadingController::class, 'destroy']);
-            Route::post('{id}', [ReadingController::class, 'import']);
+            Route::post('import', [ReadingController::class, 'import']);
         });
     });
 
