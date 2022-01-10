@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')
             Route::patch('{id}', [ReadingController::class, 'update']);
             Route::delete('{id}', [ReadingController::class, 'destroy']);
             Route::post('import', [ReadingController::class, 'import']);
+            Route::get('download/{type}', [ReadingController::class, 'download']);
         });
     });
 

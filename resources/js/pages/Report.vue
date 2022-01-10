@@ -1,49 +1,52 @@
 <template>
-    <div class="container-fluid">
-
-        <div class="card">
-            <div class="card-header">
-                <div class="btn-toolbar" role="toolbar" aria-label="">
-                    <div class="btn-group" role="group" aria-label="">
-                        <button type="button" class="btn btn-outline-dark" @click="today">
-                            TODAY
-                        </button>
-                        <button type="button" class="btn btn-outline-dark" @click="thisWeek">
-                            THIS WEEK
-                        </button>
-                        <button type="button" class="btn btn-outline-dark" @click="thisMonth">
-                            THIS MONTH
-                        </button>
-                        <button type="button" class="btn btn-outline-dark" @click="reset">
-                            RESET
-                        </button>
-                        <button type="button" class="btn btn-outline-dark" @click="print">
-                            PRINT
-                        </button>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="btn-toolbar" role="toolbar" aria-label="">
+                            <div class="btn-group" role="group" aria-label="">
+                                <button type="button" class="btn btn-outline-dark" @click="today">
+                                    TODAY
+                                </button>
+                                <button type="button" class="btn btn-outline-dark" @click="thisWeek">
+                                    THIS WEEK
+                                </button>
+                                <button type="button" class="btn btn-outline-dark" @click="thisMonth">
+                                    THIS MONTH
+                                </button>
+                                <button type="button" class="btn btn-outline-dark" @click="reset">
+                                    RESET
+                                </button>
+                                <button class="btn btn-outline-dark" @click="print">
+                                    PRINT
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <div class="card" ref="report">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <th>
+                                <th>DATE</th>
+                                <th>TIME</th>
+                                <th>TYPE</th>
+                                <th>BS</th>
+                            </th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(reading,i) in filter" :key="reading.id">
+                                <td v-text="i+1"></td>
+                                <td v-text="formatDate(reading.read_at)"></td>
+                                <td v-text="formatTime(reading.read_at)"></td>
+                                <td v-text="capitalize(reading.type)"></td>
+                                <td v-text="reading.reading"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            </div>
-            <div class="card" ref="report">
-            <table class="table table-striped table-bordered">
-                <thead>
-                    <th>
-                        <th>DATE</th>
-                        <th>TIME</th>
-                        <th>TYPE</th>
-                        <th>BS</th>
-                    </th>
-                </thead>
-                <tbody>
-                    <tr v-for="(reading,i) in filter" :key="reading.id">
-                        <td v-text="i+1"></td>
-                        <td v-text="formatDate(reading.read_at)"></td>
-                        <td v-text="formatTime(reading.read_at)"></td>
-                        <td v-text="capitalize(reading.type)"></td>
-                        <td v-text="reading.reading"></td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 </template>
@@ -54,6 +57,7 @@ export default {
         return {
             readings: [],
             filter: [],
+            report_type: "all",
         };
     },
     mounted() {
@@ -64,20 +68,29 @@ export default {
     },
     methods: {
         print() {
-            let win = window.open(
-                "",
-                "_blank",
-                "toolbar=0,location=0,menubar=0"
-            );
-            let css = require("../../css/app.css");
-            let style = `<style>${css.toString()}</style>`;
-            console.log(css.toString());
-            // style.innerHTML = css;
-            // win.document.write(style.toString());
-            // win.document.write(this.$refs.report.innerHTML);
+            let type = this.report_type;
+            axios({
+                url: `/api/v1/readings/download/${type}`, //your url
+                method: "GET",
+                responseType: "blob", // important
+            }).then((response) => {
+                const url = window.URL.createObjectURL(
+                    new Blob([response.data])
+                );
+                // const link = document.createElement("a");
+                // link.href = url;
+                // link.setAttribute("download", "file.pdf"); //or any other extension
+                // document.body.appendChild(link);
+                // link.click();
+                var link = document.createElement("a");
+                link.href = url;
+                link.download = "readings.pdf";
+                link.dispatchEvent(new MouseEvent("click"));
+            });
         },
         reset() {
             this.filter = this.readings;
+            this.report_type = "all";
         },
         today() {
             this.filter = this.readings.filter(
@@ -85,6 +98,7 @@ export default {
                     new Date(item.read_at).toDateString() ===
                     new Date().toDateString()
             );
+            this.report_type = "today";
         },
         thisWeek() {
             let end = new Date();
@@ -95,6 +109,7 @@ export default {
             this.filter = this.readings.filter((item) =>
                 isAfter(start, new Date(item.read_at))
             );
+            this.report_type = "week";
         },
         thisMonth() {
             let end = new Date();
@@ -105,6 +120,7 @@ export default {
             this.filter = this.readings.filter((item) =>
                 isAfter(start, new Date(item.read_at))
             );
+            this.report_type = "month";
         },
         formatDate: (value) => {
             const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];

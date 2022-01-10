@@ -8,7 +8,9 @@ use Ogilo\ApiResponseHelpers;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\ReadingResource;
+use DateInterval;
 use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\Translation\Loader\CsvFileLoader;
 
@@ -46,7 +48,7 @@ class ReadingController extends Controller
         $reading = new Reading;
         $reading->reading = $request->reading;
         $reading->type = $request->type;
-        $reading->read_at = $request->read_at;
+        $reading->read_at = new DateTime($request->read_at, new DateTimeZone('africa/nairobi'));
 
         $user = $request->user();
 
@@ -97,7 +99,7 @@ class ReadingController extends Controller
         $reading = Reading::find($id);
         $reading->reading = $request->reading;
         $reading->type = $request->type;
-        $reading->read_at = $request->read_at;
+        $reading->read_at = new DateTime($request->read_at, new DateTimeZone('africa/nairobi'));
         $reading->save();
 
         return $this->updateSuccess("Reading updated", ['reading' => new ReadingResource($reading)]);
@@ -158,5 +160,39 @@ class ReadingController extends Controller
         });
 
         return $this->respondWithSuccess('File uploaded');
+    }
+
+    /**
+     * Download pdf report
+     *
+     */
+    public function download($type = "all")
+    {
+        $readings = Reading::orderBy('read_at', 'DESC');
+
+        if ($type == 'today') {
+            $date = new DateTime();
+            $date->setTime(0, 0, 0, 0);
+            $readings->where('read_at', ">=", $date);
+        }
+
+        if ($type == 'week') {
+            $date = new DateTime();
+            $date->sub(DateInterval::createFromDateString("1 week"));
+            $readings->where('read_at', '>=', $date);
+        }
+
+        if ($type == 'month') {
+            $date = new DateTime();
+            $date->sub(DateInterval::createFromDateString("1 month"));
+            $readings->where('read_at', '>=', $date);
+        }
+
+        $readings = $readings->get();
+
+        $pdf = \Illuminate\Support\Facades\App::make('snappy.pdf.wrapper');
+        $pdf->setPaper('b10');
+        $pdf = \Barryvdh\Snappy\Facades\SnappyPdf::loadView('pdf.readings', compact('readings'));
+        return $pdf->download('readings.pdf');
     }
 }
