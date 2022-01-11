@@ -16,3 +16,4 @@ yarn-error.log
 /public/.htaccess
 composer.lock
 package-lock.json
+error_log
