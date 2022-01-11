@@ -48,7 +48,7 @@ class ReadingController extends Controller
         $reading = new Reading;
         $reading->reading = $request->reading;
         $reading->type = $request->type;
-        $reading->read_at = new DateTime($request->read_at, new DateTimeZone('africa/nairobi'));
+        $reading->read_at = new DateTime($request->read_at);
 
         $user = $request->user();
 
@@ -99,7 +99,7 @@ class ReadingController extends Controller
         $reading = Reading::find($id);
         $reading->reading = $request->reading;
         $reading->type = $request->type;
-        $reading->read_at = new DateTime($request->read_at, new DateTimeZone('africa/nairobi'));
+        $reading->read_at = new DateTime($request->read_at);
         $reading->save();
 
         return $this->updateSuccess("Reading updated", ['reading' => new ReadingResource($reading)]);
