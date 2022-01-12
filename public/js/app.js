@@ -5723,25 +5723,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     print: function print() {
-      var type = this.report_type; // fetch({
-      //     url: `/api/v1/readings/download/${type}`, //your url
-      //     method: "GET",
-      //     responseType: "blob", // important
-      // }).then((response) => {
-      //     const url = window.URL.createObjectURL(
-      //         new Blob([response.data])
-      //     );
-      //     // const link = document.createElement("a");
-      //     // link.href = url;
-      //     // link.setAttribute("download", "file.pdf"); //or any other extension
-      //     // document.body.appendChild(link);
-      //     // link.click();
-      //     var link = document.createElement("a");
-      //     link.href = url;
-      //     link.download = "readings.pdf";
-      //     link.dispatchEvent(new MouseEvent("click"));
-      // });
-
+      var type = this.report_type;
       fetch("/api/v1/readings/download/".concat(type), {
         method: "GET",
         headers: new Headers({
@@ -5753,7 +5735,7 @@ __webpack_require__.r(__webpack_exports__);
         var url = window.URL.createObjectURL(blob);
         var a = document.createElement("a");
         a.href = url;
-        a.download = "filename.pdf";
+        a.download = "$type.pdf";
         document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
 
         a.click();
