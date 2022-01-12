@@ -9,10 +9,10 @@
                                 TODAY
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-dark" @click="thisWeek">
-                                THIS WEEK
+                                WEEK
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-dark" @click="thisMonth">
-                                THIS MONTH
+                                MONTH
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-dark" @click="reset">
                                 RESET

@@ -76355,7 +76355,7 @@ var render = function () {
                   },
                   [
                     _vm._v(
-                      "\n                            THIS WEEK\n                        "
+                      "\n                            WEEK\n                        "
                     ),
                   ]
                 ),
@@ -76369,7 +76369,7 @@ var render = function () {
                   },
                   [
                     _vm._v(
-                      "\n                            THIS MONTH\n                        "
+                      "\n                            MONTH\n                        "
                     ),
                   ]
                 ),
