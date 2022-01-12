@@ -5,23 +5,21 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="btn-toolbar" role="toolbar" aria-label="">
-                            <div class="btn-group" role="group" aria-label="">
-                                <button type="button" class="btn btn-outline-dark" @click="today">
-                                    TODAY
-                                </button>
-                                <button type="button" class="btn btn-outline-dark" @click="thisWeek">
-                                    THIS WEEK
-                                </button>
-                                <button type="button" class="btn btn-outline-dark" @click="thisMonth">
-                                    THIS MONTH
-                                </button>
-                                <button type="button" class="btn btn-outline-dark" @click="reset">
-                                    RESET
-                                </button>
-                                <button class="btn btn-outline-dark" @click="print">
-                                    PRINT
-                                </button>
-                            </div>
+                            <button type="button" class="btn btn-outline-dark" @click="today">
+                                TODAY
+                            </button>
+                            <button type="button" class="btn btn-outline-dark" @click="thisWeek">
+                                THIS WEEK
+                            </button>
+                            <button type="button" class="btn btn-outline-dark" @click="thisMonth">
+                                THIS MONTH
+                            </button>
+                            <button type="button" class="btn btn-outline-dark" @click="reset">
+                                RESET
+                            </button>
+                            <button class="btn btn-outline-dark" @click="print">
+                                PRINT
+                            </button>
                         </div>
                     </div>
                 </div>

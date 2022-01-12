@@ -15,7 +15,6 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-        {{ print file_get_contents(public_path('/css/table.css')) }}
 
         /* Striped table */
         .table-striped>tbody>tr:nth-child(odd)>* {
@@ -27,6 +26,7 @@
 </head>
 
 <body>
+    <h3>Blood Sugar readings</h3>
     <table class="table table-striped table-bordered" style="width: auto">
         <thead>
             <tr>
@@ -44,7 +44,7 @@
                     <td>{{ (new DateTime($reading->read_at))->format('D j-M-Y') }}</td>
                     <td>{{ (new DateTime($reading->read_at))->format('h:iA') }}</td>
                     <td>{{ strtoupper($reading->type) }}</td>
-                    <td>{{ $reading->reading }}</td>
+                    <td style="text-align: right">{{ $reading->reading }}</td>
                 </tr>
             @endforeach
         </tbody>

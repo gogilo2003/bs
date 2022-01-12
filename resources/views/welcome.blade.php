@@ -14,6 +14,9 @@
     <div id="app">
         <navbar></navbar>
         <router-view class="mt-3"></router-view>
+        {{-- <div class="container mt-5">
+            <x-reading />
+        </div> --}}
     </div>
     <script src="{{ mix('js/app.js') }}"></script>
 </body>

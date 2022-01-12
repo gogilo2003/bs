@@ -35,6 +35,7 @@ class ReadingController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request->all());
         $validator = Validator::make($request->all(), [
             'reading' => 'required|numeric',
             'type' => ['required', Rule::in(['fbs', 'rbs'])],
@@ -48,7 +49,7 @@ class ReadingController extends Controller
         $reading = new Reading;
         $reading->reading = $request->reading;
         $reading->type = $request->type;
-        $reading->read_at = new DateTime($request->read_at, new DateTimeZone('africa/nairobi'));
+        $reading->read_at = new DateTime($request->read_at);
 
         $user = $request->user();
 
@@ -191,8 +192,15 @@ class ReadingController extends Controller
         $readings = $readings->get();
 
         $pdf = \Illuminate\Support\Facades\App::make('snappy.pdf.wrapper');
-        $pdf->setPaper('b10');
-        $pdf = \Barryvdh\Snappy\Facades\SnappyPdf::loadView('pdf.readings', compact('readings'));
-        return $pdf->download('readings.pdf');
+        // $pdf->setPaper('b10');
+        $heigt = 9 * $readings->count();
+        return $pdf->setOption('page-width', '85mm')
+            ->setOption('page-height', $heigt . "mm")
+            ->setOption('margin-left', "2.5mm")
+            ->setOption('margin-right', "2.5mm")
+            ->setOption('margin-bottom', "5mm")
+            ->setOption('margin-top', "5mm")
+            ->loadView('pdf.readings', compact('readings'))
+            ->download('readings.pdf');
     }
 }
