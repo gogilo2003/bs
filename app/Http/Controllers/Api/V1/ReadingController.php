@@ -35,7 +35,7 @@ class ReadingController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'reading' => 'required|numeric',
             'type' => ['required', Rule::in(['fbs', 'rbs'])],
