@@ -89,8 +89,8 @@ export default {
     },
     methods: {
         save() {
-            let date = new Date();
-            console.log(date.toISOString());
+            // let date = new Date();
+            // console.log(date.toISOString());
             let data = {
                 reading: this.reading,
                 read_at: this.read_at,
