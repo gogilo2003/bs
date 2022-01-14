@@ -5,19 +5,19 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="btn-toolbar" role="toolbar" aria-label="">
-                            <button type="button" class="btn btn-outline-dark" @click="today">
+                            <button type="button" class="btn btn-sm btn-outline-dark" @click="today">
                                 TODAY
                             </button>
-                            <button type="button" class="btn btn-outline-dark" @click="thisWeek">
-                                THIS WEEK
+                            <button type="button" class="btn btn-sm btn-outline-dark" @click="thisWeek">
+                                WEEK
                             </button>
-                            <button type="button" class="btn btn-outline-dark" @click="thisMonth">
-                                THIS MONTH
+                            <button type="button" class="btn btn-sm btn-outline-dark" @click="thisMonth">
+                                MONTH
                             </button>
-                            <button type="button" class="btn btn-outline-dark" @click="reset">
+                            <button type="button" class="btn btn-sm btn-outline-dark" @click="reset">
                                 RESET
                             </button>
-                            <button class="btn btn-outline-dark" @click="print">
+                            <button type="button" class="btn btn-sm btn-outline-dark" @click="print">
                                 PRINT
                             </button>
                         </div>
@@ -112,24 +112,22 @@ export default {
     methods: {
         print() {
             let type = this.report_type;
-            axios({
-                url: `/api/v1/readings/download/${type}`, //your url
+            fetch(`/api/v1/readings/download/${type}`, {
                 method: "GET",
-                responseType: "blob", // important
-            }).then((response) => {
-                const url = window.URL.createObjectURL(
-                    new Blob([response.data])
-                );
-                // const link = document.createElement("a");
-                // link.href = url;
-                // link.setAttribute("download", "file.pdf"); //or any other extension
-                // document.body.appendChild(link);
-                // link.click();
-                var link = document.createElement("a");
-                link.href = url;
-                link.download = "readings.pdf";
-                link.dispatchEvent(new MouseEvent("click"));
-            });
+                headers: new Headers({
+                    Authorization: "Bearer " + localStorage.getItem("token"),
+                }),
+            })
+                .then((response) => response.blob())
+                .then((blob) => {
+                    var url = window.URL.createObjectURL(blob);
+                    var a = document.createElement("a");
+                    a.href = url;
+                    a.download = "$type.pdf";
+                    document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+                    a.click();
+                    a.remove(); //afterwards we remove the element again
+                });
         },
         reset() {
             this.filter = this.readings;
