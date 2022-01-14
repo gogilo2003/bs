@@ -24,6 +24,22 @@
                     </div>
                 </div>
                 <div class="card" ref="report">
+                    <vue-good-table
+                        :columns="columns"
+                        :rows="rows"
+                        :pagination-options="{
+                            enabled: true,
+                            perPage: 5,
+                            rowsPerPageLabel: 'Per Page',
+                            nextLabel: 'NEXT',
+                            prevLabel: 'PREV',
+                            perPageDropdownEnabled: false,
+                        }"
+                        :compactMode="true"
+                        :sort-options="{ enabled: false }"
+                        theme="nocturnal"
+                        styleClass="vgt-table striped"
+                    />
                     <table class="table table-striped table-bordered">
                         <thead>
                             <th>
@@ -53,6 +69,35 @@ import { subWeeks, subMonths, isAfter } from "date-fns/fp";
 export default {
     data: () => {
         return {
+            columns: [
+                {
+                    label: "DATE",
+                    field: "read_at",
+                    type: "date",
+                    dateInputFormat: "yyyy-MM-dd", // expects 2018-03-16
+                    dateOutputFormat: "eee, d-MMM-yyyy", // outputs Mar 16th 2018
+                    tdClass: "text-start",
+                    thClass: "text-start",
+                },
+                {
+                    label: "TIME",
+                    field: "read_at",
+                    type: "date",
+                    dateInputFormat: "h:mm:ss a", // expects 2018-03-16
+                    dateOutputFormat: "h:mm:ss a", // outputs Mar 16th 2018
+                    tdClass: "text-start",
+                    thClass: "text-start",
+                },
+                {
+                    label: "TYPE",
+                    field: "type",
+                },
+                {
+                    label: "READING",
+                    field: "reading",
+                    type: "number",
+                },
+            ],
             readings: [],
             filter: [],
             report_type: "all",
@@ -121,7 +166,7 @@ export default {
             this.report_type = "month";
         },
         formatDate: (value) => {
-            const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+            const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
             const months = [
                 "Jan",
                 "Feb",
