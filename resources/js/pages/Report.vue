@@ -2,47 +2,56 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="card">
+                <div class="card mb-2">
                     <div class="card-header">
                         <div class="btn-toolbar" role="toolbar" aria-label="">
-                            <button type="button" class="btn btn-sm btn-outline-dark" @click="today">
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-dark me-1"
+                                @click="today"
+                            >
                                 TODAY
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-dark" @click="thisWeek">
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-dark me-1"
+                                @click="thisWeek"
+                            >
                                 WEEK
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-dark" @click="thisMonth">
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-dark me-1"
+                                @click="thisMonth"
+                            >
                                 MONTH
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-dark" @click="reset">
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-dark me-1"
+                                @click="reset"
+                            >
                                 RESET
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-dark" @click="print">
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-dark"
+                                @click="print"
+                            >
                                 PRINT
                             </button>
                         </div>
                     </div>
                 </div>
                 <div class="card" ref="report">
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                            <th>
-                                <th>DATE</th>
-                                <th>TIME</th>
-                                <th>TYPE</th>
-                                <th>BS</th>
-                            </th>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(reading,i) in filter" :key="reading.id">
-                                <td v-text="i+1"></td>
-                                <td v-text="formatDate(reading.read_at)"></td>
-                                <td v-text="formatTime(reading.read_at)"></td>
-                                <td v-text="capitalize(reading.type)"></td>
-                                <td v-text="reading.reading"></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <vue-good-table
+                        :columns="columns"
+                        :rows="filter"
+                        :compactMode="true"
+                        :sort-options="{ enabled: false }"
+                        theme="nocturnal"
+                        styleClass="vgt-table striped"
+                    />
                 </div>
             </div>
         </div>
@@ -53,6 +62,35 @@ import { subWeeks, subMonths, isAfter } from "date-fns/fp";
 export default {
     data: () => {
         return {
+            columns: [
+                {
+                    label: "DATE",
+                    field: "read_at",
+                    type: "date",
+                    dateInputFormat: "yyyy-MM-dd HH:mm:ss", // expects 2018-03-16
+                    dateOutputFormat: "eee, d-MMM-yyyy", // outputs Mar 16th 2018
+                    tdClass: "text-start",
+                    thClass: "text-start",
+                },
+                {
+                    label: "TIME",
+                    field: "read_at",
+                    type: "date",
+                    dateInputFormat: "yyyy-MM-dd HH:mm:ss", // expects 2018-03-16
+                    dateOutputFormat: "h:mm:ss a", // outputs Mar 16th 2018
+                    tdClass: "text-start",
+                    thClass: "text-start",
+                },
+                {
+                    label: "TYPE",
+                    field: "type",
+                },
+                {
+                    label: "READING",
+                    field: "reading",
+                    type: "number",
+                },
+            ],
             readings: [],
             filter: [],
             report_type: "all",
@@ -119,7 +157,7 @@ export default {
             this.report_type = "month";
         },
         formatDate: (value) => {
-            const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+            const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
             const months = [
                 "Jan",
                 "Feb",
