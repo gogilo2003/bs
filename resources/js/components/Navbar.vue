@@ -1,5 +1,8 @@
 <template>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav
+        class="navbar navbar-expand-lg navbar-dark bg-dark"
+        v-on-clickaway="away"
+    >
         <div class="container">
             <router-link class="navbar-brand" to="/">BS</router-link>
             <button
@@ -15,7 +18,7 @@
             </button>
             <div
                 v-if="logedin"
-                class="collapse navbar-collapse"
+                class="navbar-collapse collapse"
                 id="collapsibleNavId"
             >
                 <ul class="navbar-nav me-auto mt-2 mt-lg-0">
@@ -51,9 +54,14 @@
 </template>
 <script>
 import router from "../routes";
+import { mixin as clickaway } from "vue-clickaway";
 
 export default {
+    mixins: [clickaway],
     methods: {
+        away: function () {
+            document.querySelector(".navbar-collapse").classList.remove("show");
+        },
         logout() {
             localStorage.clear();
             window.location = "/login";

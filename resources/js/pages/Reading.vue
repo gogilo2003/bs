@@ -4,9 +4,7 @@
             <div class="row justify-content-center">
                 <div class="col-md-8">
                     <div class="card">
-                        <div class="card-header">
-                            Blood Sugar Reading <i class="fab fa-user"></i>
-                        </div>
+                        <div class="card-header">Blood Sugar Reading</div>
 
                         <div class="card-body">
                             <div class="mb-3">
@@ -68,7 +66,7 @@ export default {
     data() {
         return {
             reading: null,
-            read_at: new Date(),
+            read_at: null,
             type: "fbs",
             options: {
                 inline: false,
@@ -111,6 +109,10 @@ export default {
                     }
                 });
         },
+    },
+    created() {},
+    mounted() {
+        document.getElementById("dateInput").focus();
     },
 };
 </script>
