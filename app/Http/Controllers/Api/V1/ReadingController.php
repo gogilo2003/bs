@@ -36,7 +36,7 @@ class ReadingController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        
+
         $validator = Validator::make($request->all(), [
             'reading' => 'required|numeric',
             'type' => ['required', Rule::in(['fbs', 'rbs'])],
@@ -194,14 +194,16 @@ class ReadingController extends Controller
 
         $pdf = \Illuminate\Support\Facades\App::make('snappy.pdf.wrapper');
         // $pdf->setPaper('b10');
-        $heigt = 9 * $readings->count();
+        $height = 7 * ($readings->count() ? $readings->count() : 1);
+        $height *= 0.78;
+        $height = (30 + ($height < 7 ? 7 : $height)) . "mm";
         return $pdf->setOption('page-width', '85mm')
-            ->setOption('page-height', $heigt . "mm")
-            ->setOption('margin-left', "2.5mm")
-            ->setOption('margin-right', "2.5mm")
-            ->setOption('margin-bottom', "5mm")
-            ->setOption('margin-top', "5mm")
-            ->loadView('pdf.readings', compact('readings'))
+            ->setOption('page-height', $height)
+            ->setOption('margin-left', "0mm")
+            ->setOption('margin-right', "0mm")
+            ->setOption('margin-bottom', "0mm")
+            ->setOption('margin-top', "0mm")
+            ->loadView('pdf.readings', compact('readings', 'height'))
             ->download('readings.pdf');
     }
 }

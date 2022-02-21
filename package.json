@@ -22,6 +22,7 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
+        "@fontsource/montserrat": "^4.5.5",
         "@fontsource/nunito": "^4.5.4",
         "@fortawesome/fontawesome-free": "^5.15.4",
         "@popperjs/core": "^2.11.2",

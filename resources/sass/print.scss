@@ -1,0 +1,114 @@
+@import '../fonts/b64/montserrat-all-200-normal.css';
+@import '../fonts/b64/montserrat-all-400-normal.css';
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 200;
+    margin: 0;
+    padding: 5mm 2.5mm;
+}
+
+h3 {
+    font-weight: 400;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 6mm;
+    padding: 0;
+    margin: 0 0 2mm 0;
+}
+
+/* Striped table */
+
+table,
+th,
+td {
+    font-size: 3mm;
+    padding: 2mm;
+    border-spacing: 0;
+    border-collapse: collapse;
+
+    &:first-child {
+        width: 5mm;
+        text-align: right;
+    }
+
+    &:nth-child(2) {
+        width: 30mm;
+        text-align: left;
+    }
+
+    &:nth-child(3) {
+        width: 15mm;
+        text-align: left;
+    }
+
+    &:nth-child(4) {
+        width: 15mm;
+        text-align: left;
+    }
+
+    &:nth-child(5) {
+        width: 15mm;
+        text-align: left;
+    }
+}
+
+
+table,
+.table-striped {
+    width: 80mm;
+    min-width: 80mm;
+    display: block;
+
+    thead,
+    tbody {
+        display: block;
+
+        tr {
+            display: block;
+
+            th,
+            td {
+                display: table-cell;
+            }
+        }
+    }
+
+    thead {
+        tr {
+            th {
+                background-color: #999;
+                color: #eee;
+                border-bottom: 1px solid #999;
+                border-right: 1px solid #999;
+
+                &:first-child {
+                    border-left: 1px solid #999;
+                }
+            }
+        }
+    }
+
+    tbody {
+        tr {
+            margin: 0;
+            padding: 0;
+            height: 7mm;
+
+            th,
+            td {
+                border-bottom: 1px solid #999;
+                border-right: 1px solid #999;
+
+                &:first-child {
+                    border-left: 1px solid #999;
+                }
+            }
+
+            &:nth-child(odd)>* {
+                background-color: rgba(0, 0, 0, .05);
+                color: #212529;
+            }
+        }
+    }
+}
