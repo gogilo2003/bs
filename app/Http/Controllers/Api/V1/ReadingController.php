@@ -8,11 +8,10 @@ use Ogilo\ApiResponseHelpers;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\ReadingResource;
+use App\Models\User;
 use DateInterval;
 use DateTime;
-use DateTimeZone;
 use Illuminate\Support\Facades\Validator;
-use Symfony\Component\Translation\Loader\CsvFileLoader;
 
 class ReadingController extends Controller
 {
@@ -155,7 +154,8 @@ class ReadingController extends Controller
                     $reading->read_at = $read_at->format('Y-m-d H:i:s');
                     $reading->type = empty(trim($item[1])) ? 'fbs' : $item[1];
                     $reading->reading = $item[2];
-                    auth()->user()->readings()->save($reading);
+                    $user = User::find(auth()->user()->id);
+                    $user->readings()->save($reading);
                 }
             } catch (\Throwable $th) {
             }
