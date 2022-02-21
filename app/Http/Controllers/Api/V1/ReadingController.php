@@ -195,7 +195,7 @@ class ReadingController extends Controller
         $pdf = \Illuminate\Support\Facades\App::make('snappy.pdf.wrapper');
         // $pdf->setPaper('b10');
         $height = 7 * ($readings->count() ? $readings->count() : 1);
-        $height *= 0.78;
+        $height *= ($height <= 110 ? 0.78 : 0.8);
         $height = (30 + ($height < 7 ? 7 : $height)) . "mm";
         return $pdf->setOption('page-width', '85mm')
             ->setOption('page-height', $height)
