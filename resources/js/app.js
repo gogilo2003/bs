@@ -1,29 +1,32 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
+import './bootstrap';
+import '../css/app.css';
 
-require('./bootstrap');
+import { createApp, h } from 'vue';
+import { createInertiaApp } from '@inertiajs/vue3';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import PrimeVue from 'primevue/config';
+import ToastService from 'primevue/toastservice';
+import Lara from '@primevue/themes/lara';
 
-// window.Vue = require('vue').default;
-import Vue from 'vue'
-import datePicker from 'vue-bootstrap-datetimepicker';
-import VueGoodTablePlugin from 'vue-good-table';
+const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
-import router from './routes'
-
-import 'pc-bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css';
-import 'vue-good-table/dist/vue-good-table.css'
-import '@fortawesome/fontawesome-free/css/all.min.css'
-
-Vue.component('navbar', require('./components/Navbar.vue').default);
-
-Vue.use(VueGoodTablePlugin);
-Vue.use(datePicker);
-
-const app = new Vue({
-    router,
-    el: '#app',
+createInertiaApp({
+    title: (title) => `${title} - ${appName}`,
+    resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
+    setup({ el, App, props, plugin }) {
+        const app = createApp({ render: () => h(App, props) })
+        app.use(plugin)
+        app.use(ZiggyVue)
+        app.use(PrimeVue, {
+            theme: {
+                preset: Lara
+            }
+        })
+        app.use(ToastService)
+        return app.mount(el);
+    },
+    progress: {
+        color: '#4B5563',
+    },
 });
-

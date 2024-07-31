@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReadingController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,9 +17,33 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('login', function () {
-})->name('login');
+Route::get('/', function () {
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+});
 
-Route::get('/{any}', function () {
-    return view('welcome');
-})->where('any', '^(?!api*|images).*');
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified', 'web'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+
+    Route::prefix('readings')->name('readings')->controller(ReadingController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store')->name('-store');
+        Route::patch('/{reading}', 'update')->name('-update');
+        Route::delete('/', 'destroy')->name('-delete');
+        Route::get('/reports', 'reports')->name('-reports');
+        Route::get('/download/{type}', 'download')->name('-download');
+    });
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__ . '/auth.php';
