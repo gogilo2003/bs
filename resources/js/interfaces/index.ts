@@ -30,3 +30,15 @@ export interface iNotification {
     danger?: string
     warning?: string
 }
+
+export interface iStats {
+    min: number;
+    max: number;
+    mean: number;
+}
+
+export interface iReading1 {
+    date: string;
+    type: string;
+    mean_reading: number;
+}

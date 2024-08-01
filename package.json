@@ -27,6 +27,7 @@
         "@fontsource/nunito": "^4.5.4",
         "@fortawesome/fontawesome-free": "^5.15.4",
         "@primevue/themes": "^4.0.3",
+        "chart.js": "^4.4.3",
         "date-fns": "^3.6.0",
         "primeicons": "github:primefaces/primeicons",
         "primevue": "^4.0.3"
