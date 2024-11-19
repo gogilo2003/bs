@@ -30,6 +30,11 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $logo = null;
+
+        if (file_exists(public_path('logo.png'))) {
+            $logo = asset('logo.png');
+        }
         return [
             ...parent::share($request),
             'auth' => [
@@ -44,7 +49,8 @@ class HandleInertiaRequests extends Middleware
                 'info' => session('info'),
                 'warning' => session('warning'),
                 'danger' => session('danger'),
-            ]
+            ],
+            "logo" => $logo,
         ];
     }
 }
