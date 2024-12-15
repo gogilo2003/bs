@@ -28,4 +28,8 @@ class StoreReadingRequest extends FormRequest
             'read_at' => 'required|date',
         ];
     }
+
+    protected function prepareForValidation(){
+        $this->merge(['read_at'=>Carbon::parse($this->read_at)]);
+    }
 }
