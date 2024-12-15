@@ -31,6 +31,6 @@ class StoreReadingRequest extends FormRequest
     }
 
     protected function prepareForValidation(){
-        $this->merge(['read_at'=>Carbon::parse($this->read_at)]);
+        $this->merge(['read_at'=>Carbon::parse(str_replace("/","-",$this->read_at))]);
     }
 }
