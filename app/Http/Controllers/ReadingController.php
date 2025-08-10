@@ -25,7 +25,7 @@ class ReadingController extends Controller
 
         $readings = Reading::orderBy('created_at', 'DESC')
             ->paginate(8)
-            ->through(fn (Reading $reading) => [
+            ->through(fn(Reading $reading) => [
                 'id' => $reading->id,
                 'read_at' => Carbon::parse($reading->read_at)->isoFormat('ddd, D MMM Y h:mm:ss A'),
                 // 'read_at' => $reading->read_at->isoFormat('ddd, D MMM Y h:mm:ss A'),
@@ -45,7 +45,7 @@ class ReadingController extends Controller
     {
         $readings = Reading::orderBy('read_at', 'DESC')
             ->get()
-            ->map(fn (Reading $reading) => [
+            ->map(fn(Reading $reading) => [
                 'id' => $reading->id,
                 'read_at' => Carbon::parse($reading->read_at)->isoFormat('ddd, D MMM Y h:mm:ss A'),
                 'reading' => $reading->reading,
@@ -126,22 +126,6 @@ class ReadingController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Reading $reading)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Reading $reading)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateReadingRequest $request, Reading $reading)
@@ -150,9 +134,7 @@ class ReadingController extends Controller
         $reading->type = $request->type;
         $reading->read_at = Carbon::parse($request->read_at);
 
-        $user = $request->user();
-
-        $user->readings()->save($reading);
+        $reading->save();
 
         return redirect()->back()->with("success", "Reading updated");
     }
