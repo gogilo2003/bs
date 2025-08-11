@@ -2,7 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { iReading1, iStats } from '../interfaces/index';
-import { defineProps, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import Statistics from '@/Components/Statistics.vue';
 import LineChart from '@/Components/LineChart.vue';
 
