@@ -171,6 +171,10 @@ Use:
 
 Prefer Vue 3 Composition API and TypeScript for actively modernized components.
 
+Before creating or extracting any Vue component, check `@resources/js/Components` for existing components that can be reused.
+
+Do not create duplicate components.
+
 ---
 
 # Refactoring Services

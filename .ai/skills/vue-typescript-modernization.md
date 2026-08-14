@@ -52,7 +52,7 @@ Modernize incrementally.
 Prefer:
 
 ```text
-resources/js/
+@resources/js/
 ├── Components/
 │   ├── UI/
 │   ├── Forms/
@@ -191,7 +191,7 @@ unless there is a documented reason.
 Shared domain types should live in:
 
 ```text
-resources/js/Types/
+@@resources/js/Types/
 ```
 
 or the existing project-specific equivalent.
@@ -303,13 +303,23 @@ Do not change form behavior merely to introduce TypeScript.
 
 Extract components when:
 
-* The component has a clear independent responsibility.
-* A UI pattern is reused.
-* A complex form section has independent behavior.
-* A section is domain-specific.
-* A component is difficult to understand or test as one unit.
+- The component has a clear independent responsibility.
+- A UI pattern is reused.
+- A complex form section has independent behavior.
+- A section is domain-specific.
+- A component is difficult to understand or test as one unit.
 
 Do not split components purely according to line count.
+
+## Reuse Existing Components
+
+Before creating any new Vue component, check `@resources/js/Components` for an existing component that already provides the needed UI pattern or behavior.
+
+Do not create duplicate or overlapping components.
+
+If a suitable component exists, reuse or extend it rather than creating a new one.
+
+Only create a new component when no existing component satisfies the requirement.
 
 ---
 
@@ -398,19 +408,20 @@ For each Vue feature:
 
 1. Identify the page.
 2. Identify its props.
-3. Identify components.
-4. Identify JavaScript files.
-5. Identify existing TypeScript.
-6. Identify composables.
-7. Identify backend response structures.
-8. Identify tests.
-9. Convert the relevant component to `<script setup lang="ts">`.
-10. Introduce explicit types.
-11. Extract reusable behavior where justified.
-12. Run type checks.
-13. Run linting.
-14. Run frontend build.
-15. Review the diff.
+3. Check `@resources/js/Components` for existing components that can be reused.
+4. Identify components.
+5. Identify JavaScript files.
+6. Identify existing TypeScript.
+7. Identify composables.
+8. Identify backend response structures.
+9. Identify tests.
+10. Convert the relevant component to `<script setup lang="ts">`.
+11. Introduce explicit types.
+12. Extract reusable behavior where justified.
+13. Run type checks.
+14. Run linting.
+15. Run frontend build.
+16. Review the diff.
 
 ---
 

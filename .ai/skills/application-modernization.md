@@ -334,15 +334,25 @@ Do not rely on `Object`, `Array`, or `any` when meaningful types can be defined.
 
 Extract components when:
 
-* A component is becoming too large.
-* A section has independent behavior.
-* A UI pattern is reused.
-* A complex form section has its own state.
-* A component has a clear domain responsibility.
+- A component is becoming too large.
+- A section has independent behavior.
+- A UI pattern is reused.
+- A complex form section has its own state.
+- A component has a clear domain responsibility.
 
 Do not split components merely to reduce line count.
 
 A component should have a meaningful responsibility.
+
+## Reuse Existing Components
+
+Before creating any new Vue component, check `@resources/js/Components` for an existing component that already provides the needed UI pattern or behavior.
+
+Do not create duplicate or overlapping components.
+
+If a suitable component exists, reuse or extend it rather than creating a new one.
+
+Only create a new component when no existing component satisfies the requirement.
 
 ---
 
@@ -371,7 +381,7 @@ Do not create composables that simply move a few lines of code without improving
 Prefer organizing shared frontend types under:
 
 ```text
-resources/js/Types/
+@resources/js/Types/
 ```
 
 or the existing project-specific type structure.

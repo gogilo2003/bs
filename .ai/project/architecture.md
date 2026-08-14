@@ -34,7 +34,7 @@ description: Core project context, conventions, and architectural constraints fo
 - `<script setup lang="ts">` for all new components
 - Typed Inertia page props
 - Composables for reusable client-side behavior
-- Shared types in `resources/js/Types/`
+- Shared types in `@resources/js/Types/`
 
 ### Routing
 
