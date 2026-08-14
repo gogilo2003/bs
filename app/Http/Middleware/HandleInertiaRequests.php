@@ -2,8 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Tighten\Ziggy\Ziggy;
+use Illuminate\Http\Request;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -17,7 +18,7 @@ class HandleInertiaRequests extends Middleware
     /**
      * Determine the current asset version.
      */
-    public function version(Request $request): ?string
+    public function version(Request $request): string|null
     {
         return parent::version($request);
     }
@@ -29,11 +30,27 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $logo = null;
+
+        if (file_exists(public_path('logo.png'))) {
+            $logo = asset('logo.png');
+        }
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
             ],
+            'ziggy' => [
+                ...(new Ziggy)->toArray(),
+                'location' => $request->url(),
+            ],
+            'notification' => [
+                'success' => session('success'),
+                'info' => session('info'),
+                'warning' => session('warning'),
+                'danger' => session('danger'),
+            ],
+            "logo" => $logo,
         ];
     }
 }
