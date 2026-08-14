@@ -21,10 +21,10 @@ The migration uses two sibling directories:
 
 Where:
 
-* `bs` is the existing Laravel 10 application.
-* `bs-upgrade` is the Laravel 13 migration workspace.
+* `bs` is the existing Laravel 10 application **and contains the Git repository**.
+* `bs-upgrade` is a **fresh Laravel 13 installation** used only as a source of framework foundation files.
 
-The existing application's Git history must be preserved in `bs-upgrade`.
+The existing application's Git history must be preserved in `bs`.
 
 ---
 
@@ -42,12 +42,20 @@ The migration follows this model:
                     ┌───────────────────┐
                     │  Laravel 13      │
                     │  Fresh Foundation │
+                    │  (bs-upgrade)    │
                     └─────────┬─────────┘
                               │
                               ▼
-                    bs-upgrade / upgrade
+                    bs (upgrade branch)
                               │
-                    migrate functionality
+                     copy fresh foundation
+                              │
+                              ▼
+                    wipe working tree
+                    (preserve .git)
+                              │
+                              ▼
+                     migrate functionality
                               │
                               ▼
                     verified Laravel 13
@@ -65,6 +73,7 @@ The legacy application is the source of:
 * Existing integrations
 * Existing tests
 * Existing application architecture
+* **Git history**
 
 The fresh Laravel 13 application is the source of:
 
@@ -90,7 +99,7 @@ Throughout this skill:
 /home/ogilo/Projects/bs
 ```
 
-This contains the Laravel 10 application.
+This contains the Laravel 10 application **and the Git repository**.
 
 ### Upgrade project
 
@@ -98,7 +107,7 @@ This contains the Laravel 10 application.
 /home/ogilo/Projects/bs-upgrade
 ```
 
-This contains the Laravel 13 migration.
+This contains a **fresh Laravel 13 installation**. It is **read-only** during migration except as a source of files to copy into `bs`.
 
 ### Legacy branch
 
@@ -106,7 +115,7 @@ This contains the Laravel 13 migration.
 main
 ```
 
-The `main` branch in the upgrade repository represents the historical/application baseline that must be preserved.
+The `main` branch in `bs` represents the historical/application baseline that must be preserved.
 
 ### Upgrade branch
 
@@ -114,13 +123,13 @@ The `main` branch in the upgrade repository represents the historical/applicatio
 upgrade
 ```
 
-The `upgrade` branch is the Laravel 13 migration branch.
+The `upgrade` branch is created inside `bs` and is the Laravel 13 migration branch.
 
 ---
 
 # 3. Critical Safety Rules
 
-## NEVER modify the legacy application during migration
+## NEVER modify the legacy application baseline
 
 The directory:
 
@@ -128,26 +137,24 @@ The directory:
 /home/ogilo/Projects/bs
 ```
 
-is read-only from the perspective of this migration.
+is read-only on the `main` branch from the perspective of this migration.
 
 Do not:
 
-* Delete files
-* Rename files
-* Run destructive migrations
-* Change dependencies
-* Modify configuration
-* Reset Git
-* Rewrite history
-* Change branches
+* Delete files on `main`
+* Rename files on `main`
+* Run destructive migrations on `main`
+* Change dependencies on `main`
+* Modify configuration on `main`
+* Reset Git on `main`
+* Rewrite history on `main`
+* Change branches away from `main` without explicit instruction
 
 unless the user explicitly requests such an operation on `bs`.
 
-The migration should normally be performed entirely in:
+The migration is performed on the `upgrade` branch inside `bs`.
 
-```text
-/home/ogilo/Projects/bs-upgrade
-```
+`bs-upgrade` is a **read-only source of fresh Laravel 13 files**. Do not modify it.
 
 ---
 
@@ -167,7 +174,7 @@ ls -la /home/ogilo/Projects/bs
 ls -la /home/ogilo/Projects/bs-upgrade
 ```
 
-Verify the legacy project:
+Verify the legacy project contains the Git repository:
 
 ```bash
 cd /home/ogilo/Projects/bs
@@ -176,22 +183,20 @@ git branch --show-current
 git log --oneline -5
 ```
 
-Verify the upgrade repository:
+Verify the fresh Laravel 13 project:
 
 ```bash
 cd /home/ogilo/Projects/bs-upgrade
-git status
-git branch --show-current
-git log --oneline -5
+php artisan --version
+ls -la
 ```
 
 Do not proceed if:
 
-* `bs` does not exist.
-* `bs-upgrade` does not exist.
-* Either directory is not the expected repository.
-* The Git state is ambiguous.
-* There are unexpected uncommitted changes that could be lost.
+* `bs` does not exist or is not a Git repository.
+* `bs-upgrade` does not exist or is not a Laravel 13 application.
+* The Git state in `bs` is ambiguous.
+* There are unexpected uncommitted changes in `bs` that could be lost.
 * The repositories do not correspond to the expected application.
 
 When in doubt, stop and ask the user.
@@ -200,93 +205,58 @@ When in doubt, stop and ask the user.
 
 # 5. Preserve Git History
 
-The purpose of keeping the existing `.git` directory in `bs-upgrade` is to preserve the project's existing commit history.
-
-The migration must NOT initialize a new Git repository inside `bs-upgrade`.
-
-Do not run:
-
-```bash
-rm -rf .git
-git init
-```
-
-The existing `.git` directory must remain intact.
-
----
-
-# 6. Create the Laravel 13 Foundation
-
-The fresh Laravel 13 project must be created outside `bs-upgrade` first.
-
-Use a temporary sibling directory.
-
-For example:
+The Git repository lives in:
 
 ```text
-/home/ogilo/Projects/
-├── bs/
-├── bs-upgrade/
-└── bs-laravel-13/
+/home/ogilo/Projects/bs/.git
 ```
 
-The exact temporary directory name may be chosen by the agent, but it must not overwrite either existing project.
+This repository must remain intact throughout the migration.
 
-Before creation, verify the temporary directory does not already contain an unrelated project.
+Do not:
 
-Create the Laravel 13 application using the current Laravel installer or Composer method appropriate for the environment.
+* Delete `.git`
+* Run `git init` in `bs-upgrade`
+* Move `.git` between directories
+* Clone or reinitialize the repository
 
-The resulting project must be a genuine fresh Laravel 13 application.
-
-Verify:
-
-```bash
-php artisan --version
-```
-
-Expected result should indicate Laravel 13.
+The migration preserves history by working on a branch inside the existing repository.
 
 ---
 
-# 7. Do Not Build Laravel 13 Directly Inside bs-upgrade
+# 6. The Fresh Laravel 13 Foundation
 
-Do NOT run:
-
-```bash
-laravel new bs-upgrade
-```
-
-Do NOT overwrite `bs-upgrade` directly.
-
-The required sequence is:
-
-```text
-bs-upgrade
-    ↓
-preserve .git
-    ↓
-fresh Laravel 13 project created elsewhere
-    ↓
-copy Laravel 13 project files into bs-upgrade
-```
-
-This makes the Git preservation requirement explicit and prevents accidental repository destruction.
-
----
-
-# 8. Create the Upgrade Branch
-
-Before replacing the contents of `bs-upgrade`, create the migration branch.
-
-From:
+The fresh Laravel 13 project already exists at:
 
 ```text
 /home/ogilo/Projects/bs-upgrade
 ```
 
-verify the existing branch structure.
+This is a **complete fresh Laravel 13 installation** created separately.
 
-Create:
+Verify it is a valid Laravel 13 application:
+
+```bash
+cd /home/ogilo/Projects/bs-upgrade
+php artisan --version
+composer validate
+```
+
+This directory is the **source of framework files** for the migration.
+
+Do not modify `bs-upgrade`. Treat it as read-only.
+
+---
+
+# 7. Create the Upgrade Branch in bs
+
+From the legacy project:
+
+```bash
+cd /home/ogilo/Projects/bs
+```
+
+Create the migration branch:
 
 ```bash
 git switch -c upgrade
@@ -313,23 +283,24 @@ upgrade
 
 ---
 
-# 9. Clean bs-upgrade Without Removing .git
+# 8. Clean the Upgrade Branch Without Removing .git
 
 Once the following have been verified:
 
-* Correct repository
+* Correct repository (`bs`)
 * Correct path
-* Correct branch
+* Correct branch (`upgrade`)
 * Clean/understood Git state
-* Fresh Laravel 13 project exists separately
+* Fresh Laravel 13 project exists at `bs-upgrade`
+* `bs-upgrade` is a valid Laravel 13 installation
 
-remove all files from:
+Remove all files from:
 
 ```text
-/home/ogilo/Projects/bs-upgrade
+/home/ogilo/Projects/bs
 ```
 
-EXCEPT:
+**EXCEPT:**
 
 ```text
 .git
@@ -338,7 +309,7 @@ EXCEPT:
 The cleanup must preserve:
 
 ```text
-/home/ogilo/Projects/bs-upgrade/.git
+/home/ogilo/Projects/bs/.git
 ```
 
 Do not delete `.git`.
@@ -346,14 +317,14 @@ Do not delete `.git`.
 A safe conceptual operation is:
 
 ```text
-delete everything inside bs-upgrade
+delete everything inside bs
 except .git
 ```
 
 After cleanup:
 
 ```bash
-ls -la /home/ogilo/Projects/bs-upgrade
+ls -la /home/ogilo/Projects/bs
 ```
 
 The `.git` directory must still exist.
@@ -369,23 +340,29 @@ The historical commit history must still be available.
 
 ---
 
-# 10. Copy the Fresh Laravel 13 Foundation
+# 9. Copy the Fresh Laravel 13 Foundation
 
-Copy the contents of the temporary Laravel 13 project into:
+Copy the contents of the fresh Laravel 13 project from:
 
 ```text
 /home/ogilo/Projects/bs-upgrade
 ```
 
-Do NOT copy its `.git` directory.
+into:
+
+```text
+/home/ogilo/Projects/bs
+```
+
+Do NOT copy `bs-upgrade`'s `.git` directory.
 
 The Laravel 13 project's Git metadata must not replace the existing `.git`.
 
 The result should be:
 
 ```text
-bs-upgrade/
-├── .git/                 ← ORIGINAL Git repository
+bs/
+├── .git/                 ← ORIGINAL Git repository (preserved)
 ├── app/
 ├── bootstrap/
 ├── config/
@@ -403,12 +380,12 @@ bs-upgrade/
 
 ---
 
-# 11. Verify Git History After Foundation Copy
+# 10. Verify Git History After Foundation Copy
 
 Immediately verify:
 
 ```bash
-cd /home/ogilo/Projects/bs-upgrade
+cd /home/ogilo/Projects/bs
 
 git status
 git log --oneline -10
@@ -421,7 +398,7 @@ Do not accept the result if the repository now contains the fresh Laravel applic
 
 ---
 
-# 12. Establish the Laravel 13 Baseline
+# 11. Establish the Laravel 13 Baseline
 
 Before migrating application functionality, establish a clean Laravel 13 baseline.
 
@@ -460,7 +437,7 @@ The baseline should be known to work before application code is introduced.
 
 ---
 
-# 13. Install gogilo/breeze
+# 12. Install gogilo/breeze
 
 The Laravel 13 project uses:
 
@@ -512,11 +489,11 @@ Do NOT copy Laravel 10 Breeze files wholesale.
 
 Instead:
 
-1. Inspect the Laravel 10 authentication implementation.
-2. Inspect the Laravel 13 `gogilo/breeze` implementation.
+1. Inspect the Laravel 10 authentication implementation in `bs`.
+2. Inspect the Laravel 13 `gogilo/breeze` implementation (currently in `bs-upgrade`, then copied to `bs`).
 3. Identify custom application functionality.
 4. Preserve the Laravel 13 authentication foundation.
-5. Migrate only application-specific authentication behavior.
+5. Migrate only application-specific authentication behavior into `bs`.
 
 Verify:
 
@@ -536,7 +513,7 @@ Verify:
 
 # 15. Begin Gradual Feature Migration
 
-After the Laravel 13 foundation is stable, migrate application functionality gradually.
+After the Laravel 13 foundation is stable in `bs` on the `upgrade` branch, migrate application functionality gradually.
 
 Do NOT attempt to migrate the entire `bs` application in one operation.
 
@@ -579,6 +556,8 @@ Inspect the legacy application:
 ```text
 /home/ogilo/Projects/bs
 ```
+
+on the `main` branch if needed, or by inspecting the current working tree before cleanup.
 
 Identify all relevant:
 
@@ -969,18 +948,18 @@ large speculative migration
 
 # 24. Destructive Operation Policy
 
-The initial cleanup of `bs-upgrade` is destructive.
+The initial cleanup of `bs` on the `upgrade` branch is destructive.
 
 Before performing it, the agent MUST verify:
 
 ```text
-[ ] Correct directory
+[ ] Correct directory (/home/ogilo/Projects/bs)
 [ ] Correct Git repository
-[ ] Correct branch
+[ ] Correct branch (upgrade)
 [ ] Existing .git directory
 [ ] Git history visible
-[ ] Fresh Laravel 13 project exists elsewhere
-[ ] Temporary Laravel project is valid
+[ ] Fresh Laravel 13 project exists at bs-upgrade
+[ ] bs-upgrade is a valid Laravel 13 installation
 [ ] User has not left important uncommitted work in bs-upgrade
 ```
 
@@ -995,7 +974,7 @@ Never execute destructive cleanup based only on an assumed path.
 The migration is complete only when:
 
 ```text
-[ ] Fresh Laravel 13 foundation established
+[ ] Fresh Laravel 13 foundation established in bs on upgrade branch
 [ ] Original Git history preserved
 [ ] upgrade branch contains Laravel 13 implementation
 [ ] gogilo/breeze installed and functional
@@ -1071,32 +1050,33 @@ This migration should be understood as:
                   /home/ogilo/Projects/bs
                            │
                            │
-                    source of behavior
+                     source of behavior
                            │
                            ▼
-              ┌─────────────────────────┐
-              │ Fresh Laravel 13        │
-              │ Foundation              │
-              └────────────┬────────────┘
-                           │
-                           ▼
-                 /home/ogilo/Projects/
-                           │
-                 ┌─────────┴─────────┐
-                 │                   │
-                bs             bs-upgrade
-             Laravel 10        Laravel 13
-             unchanged          upgrade
-                                   │
-                                   ▼
-                         Gradual feature migration
-                                   │
-                                   ▼
-                         Verified Laravel 13
-                           application
+               ┌─────────────────────────┐
+               │ Fresh Laravel 13        │
+               │ Foundation              │
+               │ (bs-upgrade)           │
+               └────────────┬────────────┘
+                            │
+                            ▼
+                  /home/ogilo/Projects/bs
+                    (upgrade branch)
+                            │
+                     copy fresh foundation
+                            │
+                     wipe working tree
+                     (preserve .git)
+                            │
+                            ▼
+                  Gradual feature migration
+                            │
+                            ▼
+                  Verified Laravel 13
+                    application
 ```
 
-The legacy application is preserved.
+The legacy application is preserved on `main`.
 
 The Git history is preserved.
 
