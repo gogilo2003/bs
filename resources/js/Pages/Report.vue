@@ -3,7 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import Paginator from "../Components/Paginator.vue";
 import Button from "primevue/button";
-import { iReading, iNotification } from '../interfaces/index';
+import { iReading, iNotification, TypeOption } from '../interfaces/index';
 import { subWeeks, subMonths, isAfter } from "date-fns/fp";
 import { ref, onMounted } from 'vue';
 
@@ -12,8 +12,8 @@ const props = defineProps<{
     readings: iReading[]
 }>()
 
-const filter = ref([])
-const report_type = ref()
+const filter = ref<iReading[]>([])
+const report_type = ref<string | null>()
 
 const today = () => {
     filter.value = props.readings.filter(

@@ -5,7 +5,7 @@ import Paginator from "../Components/Paginator.vue";
 import SecondaryButton from "../Components/SecondaryButton.vue";
 import Modal from '../Components/Modal.vue'
 import { computed, ref } from 'vue';
-import { iReadings, iNotification, iReading } from '../interfaces/index';
+import { iReadings, iNotification, iReading, TypeOption } from '../interfaces/index';
 import InputLabel from '@/Components/InputLabel.vue';
 import Button from 'primevue/button';
 import InputNumber from 'primevue/inputnumber'
@@ -25,9 +25,9 @@ const toast = useToast();
 
 const form = useForm<{
     id: number | null
-    type: string | null
-    read_at: Date | string | null
-    reading: number | string | null
+    type: TypeOption | null
+    read_at: Date | null
+    reading: number | null
 }>({
     id: null,
     type: null,
@@ -47,7 +47,7 @@ const editReading = (reading: iReading) => {
     form.id = reading.id
     form.type = reading.type
     form.read_at = new Date(reading.read_at)
-    form.reading = reading.reading
+    form.reading = typeof reading.reading === 'number' ? reading.reading : parseFloat(reading.reading)
     showDialog.value = true
 }
 
@@ -83,10 +83,12 @@ const types = ref([
 const save = () => {
     if (form.id) {
         form.transform(data => {
-            console.log(data.read_at);
-
-            return { ...data, type: data.type?.value, read_at: data.read_at.toLocaleString() }
-        }).patch(route('readings-update', form.id), {
+            return { 
+                ...data, 
+                type: data.type?.value, 
+                read_at: data.read_at ? new Date(data.read_at).toLocaleString() : null 
+            }
+        }).patch(route('readings-update', { reading: form.id }), {
             preserveState: true,
             preserveScroll: true,
             only: ['readings', 'notification', 'errors'],
@@ -110,9 +112,11 @@ const save = () => {
         })
     } else {
         form.transform(data => {
-            console.log(data.read_at);
-
-            return { ...data, type: data.type?.value, read_at: data.read_at.toLocaleString() }
+            return { 
+                ...data, 
+                type: data.type?.value, 
+                read_at: data.read_at ? new Date(data.read_at).toLocaleString() : null 
+            }
         }).post(route('readings-store'), {
             preserveState: true,
             preserveScroll: true,
