@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateReadingsTable extends Migration
+class CreatePersonalAccessTokensTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,14 @@ class CreateReadingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('readings', function (Blueprint $table) {
+        Schema::create('personal_access_tokens', function (Blueprint $table) {
             $table->id();
-            $table->decimal('reading', 10, 1);
-            $table->string('type');
-            $table->datetime('read_at');
-            $table->unsignedBigInteger('user_id');
+            $table->morphs('tokenable');
+            $table->string('name');
+            $table->string('token', 64)->unique();
+            $table->text('abilities')->nullable();
+            $table->timestamp('last_used_at')->nullable();
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -31,6 +31,6 @@ class CreateReadingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('readings');
+        Schema::dropIfExists('personal_access_tokens');
     }
 }
