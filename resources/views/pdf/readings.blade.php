@@ -20,7 +20,7 @@
             padding: 0;
             color: #000000;
             background: #ffffff;
-            font-size: 11px;
+            font-size: 13px;
             -webkit-print-color-adjust: exact;
         }
 
@@ -39,7 +39,7 @@
         }
 
         .header h2 {
-            font-size: 9.5px;
+            font-size: 14px;
             font-weight: 500;
             color: #1f2937;
             letter-spacing: 0.4px;
@@ -71,7 +71,7 @@
         }
 
         .section-heading {
-            font-size: 8.5px;
+            font-size: 16px;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -83,7 +83,7 @@
             width: 100%;
             border-collapse: collapse;
             border: 1px solid #A6A6A6;
-            font-size: 8.5px;
+            font-size: 12px;
         }
 
         table.readings-grid th {
@@ -127,7 +127,7 @@
             border-collapse: collapse;
             border: 1px solid #A6A6A6;
             margin-bottom: 14px;
-            font-size: 8.5px;
+            font-size: 12px;
             background: #ffffff;
         }
 
