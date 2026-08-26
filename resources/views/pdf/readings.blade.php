@@ -167,11 +167,11 @@
         sort($chartDates);
         $numDates = count($chartDates);
 
-        $svgWidth = 530;
-        $svgHeight = 145;
-        $padLeft = 32;
-        $padRight = 12;
-        $padTop = 22;
+        $svgWidth = 700;
+        $svgHeight = 150;
+        $padLeft = 30;
+        $padRight = 2;
+        $padTop = 24;
         $padBottom = 22;
         $plotW = $svgWidth - $padLeft - $padRight;
         $plotH = $svgHeight - $padTop - $padBottom;
@@ -230,13 +230,13 @@
 
     @if ($numDates > 0)
     <div class="chart-container">
-        <svg width="100%" height="145" viewBox="0 0 {{ $svgWidth }} {{ $svgHeight }}" style="background: #ffffff;">
+        <svg width="100%" height="150" viewBox="0 0 {{ $svgWidth }} {{ $svgHeight }}" preserveAspectRatio="none" style="display: block; width: 100%; background: #ffffff;">
             <!-- Legend -->
-            <rect x="{{ $padLeft + 40 }}" y="5" width="14" height="6" fill="#9333EA" />
-            <text x="{{ $padLeft + 58 }}" y="11" font-size="7.5" fill="#374151" font-family="sans-serif">Fasting Blood Sugar Readings</text>
+            <rect x="{{ $padLeft + 10 }}" y="6" width="14" height="6" fill="#9333EA" />
+            <text x="{{ $padLeft + 28 }}" y="12" font-size="7.5" fill="#374151" font-family="sans-serif">Fasting Blood Sugar Readings</text>
 
-            <rect x="{{ $padLeft + 200 }}" y="5" width="14" height="6" fill="#F97316" />
-            <text x="{{ $padLeft + 218 }}" y="11" font-size="7.5" fill="#374151" font-family="sans-serif">Random Blood Sugar Readings</text>
+            <rect x="{{ $padLeft + 180 }}" y="6" width="14" height="6" fill="#F97316" />
+            <text x="{{ $padLeft + 198 }}" y="12" font-size="7.5" fill="#374151" font-family="sans-serif">Random Blood Sugar Readings</text>
 
             <!-- Chart Box Border -->
             <rect x="{{ $padLeft }}" y="{{ $padTop }}" width="{{ $plotW }}" height="{{ $plotH }}" fill="none" stroke="#A6A6A6" stroke-width="1" />
@@ -261,11 +261,12 @@
             @foreach ($chartDates as $i => $d)
                 @php
                     $xPos = $numDates > 1 ? $padLeft + ($i * ($plotW / ($numDates - 1))) : $padLeft + ($plotW / 2);
+                    $anchor = $i === 0 ? 'start' : ($i === $numDates - 1 ? 'end' : 'middle');
                 @endphp
                 @if ($i > 0 && $i < $numDates - 1)
                     <line x1="{{ $xPos }}" y1="{{ $padTop }}" x2="{{ $xPos }}" y2="{{ $padTop + $plotH }}" stroke="#E5E7EB" stroke-width="1" />
                 @endif
-                <text x="{{ $xPos }}" y="{{ $padTop + $plotH + 12 }}" font-size="6.5" fill="#374151" text-anchor="middle" font-family="sans-serif">{{ date('D, jS M, Y', strtotime($d)) }}</text>
+                <text x="{{ $xPos }}" y="{{ $padTop + $plotH + 12 }}" font-size="6.5" fill="#374151" text-anchor="{{ $anchor }}" font-family="sans-serif">{{ date('D, jS M, Y', strtotime($d)) }}</text>
             @endforeach
 
             <!-- Spline Lines -->
