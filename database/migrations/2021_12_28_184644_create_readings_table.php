@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('readings', function (Blueprint $table) {
-            $table->id();
-            $table->decimal('reading', 10, 1);
-            $table->string('type');
-            $table->datetime('read_at');
-            $table->unsignedBigInteger('user_id');
-            $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
+        if (!Schema::hasTable('readings')) {
+            Schema::create('readings', function (Blueprint $table) {
+                $table->id();
+                $table->decimal('reading', 10, 1);
+                $table->string('type');
+                $table->datetime('read_at');
+                $table->unsignedBigInteger('user_id');
+                $table->timestamps();
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            });
+        }
     }
 
     /**
