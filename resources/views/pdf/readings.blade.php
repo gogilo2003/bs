@@ -3,41 +3,46 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blood Sugar Readings Report</title>
     <style>
         @page {
             size: A4 portrait;
-            margin: 10mm;
+            margin: 12mm 14mm 12mm 14mm;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Figtree', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             margin: 0;
             padding: 0;
-            color: #111827;
+            color: #000000;
             background: #ffffff;
             font-size: 11px;
+            -webkit-print-color-adjust: exact;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         .header h1 {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
-            letter-spacing: 1px;
-            margin: 0 0 4px 0;
+            letter-spacing: 0.8px;
+            margin: 0 0 3px 0;
             text-transform: uppercase;
+            color: #000000;
         }
 
         .header h2 {
-            font-size: 10px;
-            font-weight: 600;
-            color: #4b5563;
-            letter-spacing: 0.5px;
+            font-size: 9.5px;
+            font-weight: 500;
+            color: #1f2937;
+            letter-spacing: 0.4px;
             margin: 0;
             text-transform: uppercase;
         }
@@ -48,38 +53,40 @@
             text-align: center;
         }
 
-        .content-layout {
+        .columns-table {
             width: 100%;
+            border-collapse: collapse;
+            border: none;
         }
 
-        .table-col {
+        .col-readings {
             width: 68%;
             vertical-align: top;
-            padding-right: 15px;
+            padding-right: 20px;
         }
 
-        .summary-col {
+        .col-summary {
             width: 32%;
             vertical-align: top;
         }
 
-        .section-title {
-            font-size: 9px;
+        .section-heading {
+            font-size: 8.5px;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 4px;
-            color: #111827;
+            color: #000000;
         }
 
-        table.data-table {
+        table.readings-grid {
             width: 100%;
             border-collapse: collapse;
             border: 1px solid #A6A6A6;
-            font-size: 9.5px;
+            font-size: 8.5px;
         }
 
-        table.data-table th {
+        table.readings-grid th {
             background-color: #A6A6A6;
             color: #ffffff;
             font-weight: bold;
@@ -87,55 +94,60 @@
             padding: 4px 6px;
             border: 1px solid #A6A6A6;
             text-align: left;
+            height: 20px;
         }
 
-        table.data-table th.center,
-        table.data-table td.center {
+        table.readings-grid th.center,
+        table.readings-grid td.center {
             text-align: center;
         }
 
-        table.data-table th.right,
-        table.data-table td.right {
+        table.readings-grid th.right,
+        table.readings-grid td.right {
             text-align: right;
         }
 
-        table.data-table td {
+        table.readings-grid td {
             padding: 3px 6px;
             border: 1px solid #A6A6A6;
+            height: 19px;
+            color: #000000;
         }
 
-        table.data-table tr.odd {
+        table.readings-grid tr.row-odd {
             background-color: #F0EFEF;
         }
 
-        table.data-table tr.even {
+        table.readings-grid tr.row-even {
             background-color: #ffffff;
         }
 
-        table.summary-table {
+        table.summary-grid {
             width: 100%;
             border-collapse: collapse;
             border: 1px solid #A6A6A6;
-            margin-bottom: 12px;
-            font-size: 9.5px;
+            margin-bottom: 14px;
+            font-size: 8.5px;
+            background: #ffffff;
         }
 
-        table.summary-table td {
-            padding: 3px 6px;
+        table.summary-grid td {
+            padding: 3px 8px;
             border: 1px solid #A6A6A6;
+            height: 18px;
+            color: #000000;
         }
 
-        table.summary-table td.label {
+        table.summary-grid td.label-cell {
             width: 50%;
             text-transform: uppercase;
             font-weight: 500;
-            color: #374151;
             border-right: 1px solid #A6A6A6;
         }
 
-        table.summary-table td.val {
+        table.summary-grid td.val-cell {
             text-align: right;
-            font-weight: 600;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -143,23 +155,24 @@
 <body>
     @php
         $reportTitle = match($type ?? 'all') {
-            'today' => "TODAY'S REPORT (" . strtoupper(date('d F Y')) . ")",
-            'week' => "WEEKLY REPORT (" . strtoupper(date('F Y')) . ")",
+            'today' => "TODAY'S REPORT(" . strtoupper(date('d F Y')) . ")",
+            'week' => "WEEKLY REPORT(" . strtoupper(date('F Y')) . ")",
             'month' => "MONTHLY REPORT(" . strtoupper(date('F Y')) . ")",
-            'quarterly' => "QUARTERLY REPORT (" . strtoupper(date('F Y')) . ")",
-            default => "ALL TIME REPORT (" . strtoupper(date('F Y')) . ")",
+            'quarterly' => "QUARTERLY REPORT(" . strtoupper(date('F Y')) . ")",
+            default => "ALL TIME REPORT(" . strtoupper(date('F Y')) . ")",
         };
 
         // Prepare chart values
         $chartDates = !empty($last7DaysReadings) ? array_keys($last7DaysReadings) : [];
         sort($chartDates);
         $numDates = count($chartDates);
-        $svgWidth = 520;
-        $svgHeight = 130;
-        $padLeft = 35;
-        $padRight = 15;
-        $padTop = 25;
-        $padBottom = 25;
+
+        $svgWidth = 530;
+        $svgHeight = 145;
+        $padLeft = 32;
+        $padRight = 12;
+        $padTop = 22;
+        $padBottom = 22;
         $plotW = $svgWidth - $padLeft - $padRight;
         $plotH = $svgHeight - $padTop - $padBottom;
 
@@ -171,7 +184,7 @@
                 }
             }
         }
-        $minVal = !empty($allVals) ? max(0, floor(min($allVals)) - 1) : 4;
+        $minVal = !empty($allVals) ? max(0, floor(min($allVals)) - 1) : 6;
         $maxVal = !empty($allVals) ? ceil(max($allVals)) + 1 : 16;
         if ($maxVal <= $minVal) { $maxVal = $minVal + 10; }
         $range = $maxVal - $minVal;
@@ -217,68 +230,73 @@
 
     @if ($numDates > 0)
     <div class="chart-container">
-        <svg width="100%" height="130" viewBox="0 0 {{ $svgWidth }} {{ $svgHeight }}" style="background: #ffffff;">
+        <svg width="100%" height="145" viewBox="0 0 {{ $svgWidth }} {{ $svgHeight }}" style="background: #ffffff;">
             <!-- Legend -->
-            <rect x="{{ $padLeft }}" y="6" width="12" height="6" fill="#9333EA" />
-            <text x="{{ $padLeft + 16 }}" y="12" font-size="8" fill="#374151" font-family="sans-serif">Fasting Blood Sugar Readings</text>
+            <rect x="{{ $padLeft + 40 }}" y="5" width="14" height="6" fill="#9333EA" />
+            <text x="{{ $padLeft + 58 }}" y="11" font-size="7.5" fill="#374151" font-family="sans-serif">Fasting Blood Sugar Readings</text>
 
-            <rect x="{{ $padLeft + 150 }}" y="6" width="12" height="6" fill="#F97316" />
-            <text x="{{ $padLeft + 166 }}" y="12" font-size="8" fill="#374151" font-family="sans-serif">Random Blood Sugar Readings</text>
+            <rect x="{{ $padLeft + 200 }}" y="5" width="14" height="6" fill="#F97316" />
+            <text x="{{ $padLeft + 218 }}" y="11" font-size="7.5" fill="#374151" font-family="sans-serif">Random Blood Sugar Readings</text>
+
+            <!-- Chart Box Border -->
+            <rect x="{{ $padLeft }}" y="{{ $padTop }}" width="{{ $plotW }}" height="{{ $plotH }}" fill="none" stroke="#A6A6A6" stroke-width="1" />
 
             <!-- Y Grid Lines & Ticks -->
-            @for ($tick = 0; $tick <= 4; $tick++)
+            @for ($tick = 1; $tick < 5; $tick++)
                 @php
-                    $v = round($minVal + ($tick * ($range / 4)), 1);
-                    $yPos = $padTop + $plotH - ($tick * ($plotH / 4));
+                    $yPos = $padTop + ($tick * ($plotH / 5));
                 @endphp
-                <line x1="{{ $padLeft }}" y1="{{ $yPos }}" x2="{{ $svgWidth - $padRight }}" y2="{{ $yPos }}" stroke="#E5E7EB" stroke-width="1" />
-                <text x="{{ $padLeft - 5 }}" y="{{ $yPos + 3 }}" font-size="8" fill="#6B7280" text-anchor="end" font-family="sans-serif">{{ $v }}</text>
+                <line x1="{{ $padLeft }}" y1="{{ $yPos }}" x2="{{ $padLeft + $plotW }}" y2="{{ $yPos }}" stroke="#E5E7EB" stroke-width="1" />
             @endfor
 
-            <!-- X Ticks -->
+            @for ($tick = 0; $tick <= 5; $tick++)
+                @php
+                    $v = round($minVal + ($tick * ($range / 5)), 1);
+                    $yPos = $padTop + $plotH - ($tick * ($plotH / 5));
+                @endphp
+                <text x="{{ $padLeft - 5 }}" y="{{ $yPos + 2.5 }}" font-size="7.5" fill="#374151" text-anchor="end" font-family="sans-serif">{{ $v }}</text>
+            @endfor
+
+            <!-- X Vertical Grid Lines & Ticks -->
             @foreach ($chartDates as $i => $d)
                 @php
                     $xPos = $numDates > 1 ? $padLeft + ($i * ($plotW / ($numDates - 1))) : $padLeft + ($plotW / 2);
                 @endphp
-                <line x1="{{ $xPos }}" y1="{{ $padTop }}" x2="{{ $xPos }}" y2="{{ $padTop + $plotH }}" stroke="#F3F4F6" stroke-width="1" />
-                <text x="{{ $xPos }}" y="{{ $padTop + $plotH + 14 }}" font-size="7" fill="#6B7280" text-anchor="middle" font-family="sans-serif">{{ date('D, jS M', strtotime($d)) }}</text>
+                @if ($i > 0 && $i < $numDates - 1)
+                    <line x1="{{ $xPos }}" y1="{{ $padTop }}" x2="{{ $xPos }}" y2="{{ $padTop + $plotH }}" stroke="#E5E7EB" stroke-width="1" />
+                @endif
+                <text x="{{ $xPos }}" y="{{ $padTop + $plotH + 12 }}" font-size="6.5" fill="#374151" text-anchor="middle" font-family="sans-serif">{{ date('D, jS M, Y', strtotime($d)) }}</text>
             @endforeach
 
-            <!-- Lines -->
+            <!-- Spline Lines -->
             @if (!empty($fbsPath))
-                <path d="{{ $fbsPath }}" fill="none" stroke="#9333EA" stroke-width="2" />
-                @foreach ($fbsPoints as $pt)
-                    <circle cx="{{ $pt[0] }}" cy="{{ $pt[1] }}" r="2" fill="#9333EA" />
-                @endforeach
+                <path d="{{ $fbsPath }}" fill="none" stroke="#9333EA" stroke-width="1.8" />
             @endif
 
             @if (!empty($rbsPath))
-                <path d="{{ $rbsPath }}" fill="none" stroke="#F97316" stroke-width="2" />
-                @foreach ($rbsPoints as $pt)
-                    <circle cx="{{ $pt[0] }}" cy="{{ $pt[1] }}" r="2" fill="#F97316" />
-                @endforeach
+                <path d="{{ $rbsPath }}" fill="none" stroke="#F97316" stroke-width="1.8" />
             @endif
         </svg>
     </div>
     @endif
 
-    <table class="content-layout">
+    <table class="columns-table">
         <tr>
-            <td class="table-col">
-                <div class="section-title">READINGS</div>
-                <table class="data-table">
+            <td class="col-readings">
+                <div class="section-heading">READINGS</div>
+                <table class="readings-grid">
                     <thead>
                         <tr>
-                            <th class="center" style="width: 25px">#</th>
-                            <th style="width: 100px">DATE</th>
-                            <th style="width: 65px">TIME</th>
-                            <th style="width: 50px">TYPE</th>
-                            <th class="right" style="width: 60px">READING</th>
+                            <th class="center" style="width: 22px">#</th>
+                            <th style="width: 95px">DATE</th>
+                            <th style="width: 60px">TIME</th>
+                            <th style="width: 45px">TYPE</th>
+                            <th class="right" style="width: 55px">READING</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($readings as $reading)
-                            <tr class="{{ $loop->iteration % 2 === 1 ? 'odd' : 'even' }}">
+                            <tr class="{{ $loop->iteration % 2 === 1 ? 'row-odd' : 'row-even' }}">
                                 <td class="center">{{ $loop->iteration }}</td>
                                 <td>{{ (new DateTime($reading->read_at))->format('D d-M-Y') }}</td>
                                 <td>{{ (new DateTime($reading->read_at))->format('h:iA') }}</td>
@@ -287,8 +305,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="center" style="padding: 16px; color: #6b7280; background: #ffffff;">
-                                    No readings recorded.
+                                <td colspan="5" class="center" style="padding: 14px; color: #6b7280; background: #ffffff;">
+                                    No readings recorded for this period.
                                 </td>
                             </tr>
                         @endforelse
@@ -296,33 +314,33 @@
                 </table>
             </td>
 
-            <td class="summary-col">
-                <div class="section-title">WEEKLY SUMMARY</div>
-                <table class="summary-table">
-                    <tr><td class="label">MEAN</td><td class="val">{{ number_format((float)($weeklyStats['mean'] ?? 0), 1) }}</td></tr>
-                    <tr><td class="label">MIN</td><td class="val">{{ number_format((float)($weeklyStats['min'] ?? 0), 1) }}</td></tr>
-                    <tr><td class="label">MAX</td><td class="val">{{ number_format((float)($weeklyStats['max'] ?? 0), 1) }}</td></tr>
+            <td class="col-summary">
+                <div class="section-heading">WEEKLY SUMMARY</div>
+                <table class="summary-grid">
+                    <tr><td class="label-cell">MEAN</td><td class="val-cell">{{ number_format((float)($weeklyStats['mean'] ?? 0), 1) }}</td></tr>
+                    <tr><td class="label-cell">MIN</td><td class="val-cell">{{ number_format((float)($weeklyStats['min'] ?? 0), 1) }}</td></tr>
+                    <tr><td class="label-cell">MAX</td><td class="val-cell">{{ number_format((float)($weeklyStats['max'] ?? 0), 1) }}</td></tr>
                 </table>
 
-                <div class="section-title">MONTHLY SUMMARY</div>
-                <table class="summary-table">
-                    <tr><td class="label">MEAN</td><td class="val">{{ number_format((float)($monthlyStats['mean'] ?? 0), 1) }}</td></tr>
-                    <tr><td class="label">MIN</td><td class="val">{{ number_format((float)($monthlyStats['min'] ?? 0), 1) }}</td></tr>
-                    <tr><td class="label">MAX</td><td class="val">{{ number_format((float)($monthlyStats['max'] ?? 0), 1) }}</td></tr>
+                <div class="section-heading">MONTHLY SUMMARY</div>
+                <table class="summary-grid">
+                    <tr><td class="label-cell">MEAN</td><td class="val-cell">{{ number_format((float)($monthlyStats['mean'] ?? 0), 1) }}</td></tr>
+                    <tr><td class="label-cell">MIN</td><td class="val-cell">{{ number_format((float)($monthlyStats['min'] ?? 0), 1) }}</td></tr>
+                    <tr><td class="label-cell">MAX</td><td class="val-cell">{{ number_format((float)($monthlyStats['max'] ?? 0), 1) }}</td></tr>
                 </table>
 
-                <div class="section-title">QUARTERLY SUMMARY</div>
-                <table class="summary-table">
-                    <tr><td class="label">MEAN</td><td class="val">{{ number_format((float)($quarterlyStats['mean'] ?? 0), 1) }}</td></tr>
-                    <tr><td class="label">MIN</td><td class="val">{{ number_format((float)($quarterlyStats['min'] ?? 0), 1) }}</td></tr>
-                    <tr><td class="label">MAX</td><td class="val">{{ number_format((float)($quarterlyStats['max'] ?? 0), 1) }}</td></tr>
+                <div class="section-heading">QUARTERLY SUMMARY</div>
+                <table class="summary-grid">
+                    <tr><td class="label-cell">MEAN</td><td class="val-cell">{{ number_format((float)($quarterlyStats['mean'] ?? 0), 1) }}</td></tr>
+                    <tr><td class="label-cell">MIN</td><td class="val-cell">{{ number_format((float)($quarterlyStats['min'] ?? 0), 1) }}</td></tr>
+                    <tr><td class="label-cell">MAX</td><td class="val-cell">{{ number_format((float)($quarterlyStats['max'] ?? 0), 1) }}</td></tr>
                 </table>
 
-                <div class="section-title">ALL TIME SUMMARY</div>
-                <table class="summary-table">
-                    <tr><td class="label">MEAN</td><td class="val">{{ number_format((float)($allTimeStats['mean'] ?? 0), 1) }}</td></tr>
-                    <tr><td class="label">MIN</td><td class="val">{{ number_format((float)($allTimeStats['min'] ?? 0), 1) }}</td></tr>
-                    <tr><td class="label">MAX</td><td class="val">{{ number_format((float)($allTimeStats['max'] ?? 0), 1) }}</td></tr>
+                <div class="section-heading">ALL TIME SUMMARY</div>
+                <table class="summary-grid">
+                    <tr><td class="label-cell">MEAN</td><td class="val-cell">{{ number_format((float)($allTimeStats['mean'] ?? 0), 1) }}</td></tr>
+                    <tr><td class="label-cell">MIN</td><td class="val-cell">{{ number_format((float)($allTimeStats['min'] ?? 0), 1) }}</td></tr>
+                    <tr><td class="label-cell">MAX</td><td class="val-cell">{{ number_format((float)($allTimeStats['max'] ?? 0), 1) }}</td></tr>
                 </table>
             </td>
         </tr>

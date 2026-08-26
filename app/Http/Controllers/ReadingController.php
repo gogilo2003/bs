@@ -125,15 +125,22 @@ class ReadingController extends Controller
         $last7DaysReadings = $this->statsService->getLast7DaysReadings($user);
 
         $pdf = \Illuminate\Support\Facades\App::make('snappy.pdf.wrapper');
-        return $pdf->setPaper('a4')
+        $pdfOutput = $pdf->setPaper('a4')
             ->setOrientation('portrait')
-            ->setOption('margin-left', '10mm')
-            ->setOption('margin-right', '10mm')
-            ->setOption('margin-bottom', '10mm')
-            ->setOption('margin-top', '10mm')
+            ->setOption('margin-left', '12mm')
+            ->setOption('margin-right', '12mm')
+            ->setOption('margin-bottom', '12mm')
+            ->setOption('margin-top', '12mm')
             ->setOption('enable-local-file-access', true)
-            ->loadView('pdf.readings', compact('readings', 'weeklyStats', 'monthlyStats', 'quarterlyStats', 'allTimeStats', 'last7DaysReadings', 'type'))
-            ->download('blood_sugar_report.pdf');
+            ->loadView('pdf.readings', compact('readings', 'weeklyStats', 'monthlyStats', 'quarterlyStats', 'allTimeStats', 'last7DaysReadings', 'type'));
+
+        $filename = 'blood_sugar_report_' . $type . '_' . date('Y-m-d') . '.pdf';
+
+        if ($request->has('download')) {
+            return $pdfOutput->download($filename);
+        }
+
+        return $pdfOutput->inline($filename);
     }
 
     /**

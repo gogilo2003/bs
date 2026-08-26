@@ -84,7 +84,13 @@ const all = () => {
 };
 
 const print = () => {
-    window.print();
+    const url = route('readings-download', { type: report_type.value });
+    window.open(url, '_blank');
+};
+
+const downloadPdf = () => {
+    const url = route('readings-download', { type: report_type.value, download: 1 });
+    window.location.href = url;
 };
 
 const formatDate = (dateVal: string | Date) => {
@@ -124,7 +130,7 @@ onMounted(() => {
             <div class="flex items-center justify-between flex-col md:flex-row gap-4 no-print">
                 <div>
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">Blood Sugar Reports</h2>
-                    <p class="text-xs text-gray-500 mt-0.5">Filter, view, and print standard A4 medical reports.</p>
+                    <p class="text-xs text-gray-500 mt-0.5">Filter, preview, and print server-rendered A4 PDF reports.</p>
                 </div>
                 <div class="flex gap-2 flex-wrap justify-center md:justify-end items-center">
                     <Button @click="today" label="Today" :outlined="report_type !== 'today'" size="small" />
@@ -132,7 +138,8 @@ onMounted(() => {
                     <Button @click="month" label="Month" :outlined="report_type !== 'month'" size="small" />
                     <Button @click="threeMonths" label="Quarterly" :outlined="report_type !== 'quarterly'" size="small" />
                     <Button @click="all" label="All" :outlined="report_type !== 'all'" size="small" />
-                    <Button @click="print" label="Print Report" icon="pi pi-print" severity="secondary" size="small" class="ms-2" />
+                    <Button @click="print" label="Print PDF" icon="pi pi-print" severity="secondary" size="small" class="ms-2" />
+                    <Button @click="downloadPdf" label="Download" icon="pi pi-download" severity="secondary" size="small" />
                 </div>
             </div>
         </template>
