@@ -1,0 +1,10 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "instructions": [
+        "AGENTS.md",
+        ".agents/rules/shared-dev.md",
+        ".agents/rules/discussion-workflow.md",
+        ".agents/rules/decision-workflow.md",
+        ".agents/rules/plan-workflow.md"
+    ]
+}
