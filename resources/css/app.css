@@ -3,6 +3,7 @@
 @plugin "@tailwindcss/forms";
 
 @source "../views";
+@source "../js";
 @source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
 
 @theme {
