@@ -1,6 +1,9 @@
 export interface iReading {
     id: number
-    type: string
+    type: {
+        value: string
+        name: string
+    }
     read_at: Date | string
     reading: number | string
 }
@@ -41,4 +44,9 @@ export interface iReading1 {
     date: string;
     type: string;
     mean_reading: number;
+}
+
+export interface TypeOption {
+    value: string
+    name: string
 }

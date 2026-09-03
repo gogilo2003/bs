@@ -2,11 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Exception;
-use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreReadingRequest extends FormRequest
@@ -35,10 +32,8 @@ class StoreReadingRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        Log::info($this->read_at, [$this->userAgent()]);
-        try {
-            $this->merge(['read_at' => Carbon::parse(Str::replace(",", " ", Str::replace("/", "-", $this->read_at)))]);
-        } catch (Exception $e) {
+        if ($this->read_at) {
+            $this->merge(['read_at' => Carbon::parse($this->read_at)]);
         }
     }
 }
