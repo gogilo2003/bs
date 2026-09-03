@@ -36,13 +36,15 @@ in this repository.
 - Tailwind v4 is CSS-first (no `tailwind.config.js`).
 - Verify with `npm run build` / `npx vue-tsc --noEmit`.
 
-## Discussion / Decision / Plan Rules
+## Discussion / Decision / Plan / PR Rules
 
-- Discussions, decisions, and plans live in `docs/` with the paths defined in
-  `discussion-workflow.md`, `decision-workflow.md`, and `plan-workflow.md`.
+- Discussions, decisions, plans, and PR descriptions live in `docs/` with the
+  paths defined in `discussion-workflow.md`, `decision-workflow.md`,
+  `plan-workflow.md`, and `pull-request-workflow.md`.
 - The discussion-architect agent initiates, iterates, and approves.
 - The implementer agent implements and completes plans.
-- Never delete resolved discussions or decision records.
+- Never delete resolved discussions, decision records, or merged PR descriptions.
+- A PR description must reflect the actual branch diff; never fabricate changes.
 
 ## Verification
 

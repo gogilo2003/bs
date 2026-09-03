@@ -1,7 +1,7 @@
 # Project Agents
 
 This project uses opencode with specialized agents and a documented
-discussion → decision → plan → implement workflow.
+discussion → decision → plan → implement → PR workflow.
 
 ## Agents
 
@@ -15,11 +15,12 @@ discussion → decision → plan → implement workflow.
 Agent definitions live in `.agents/agents/<name>.md`. (Symlinked to
 `.opencode/agents/` so opencode discovers them at its expected location.)
 
-## Discussion → Decision → Plan → Implement Workflow
+## Discussion → Decision → Plan → Implement → PR Workflow
 
 ```
-discussion          decision (ADR)        plan                  implement
-docs/discussions/   docs/decisions/       docs/plans/pending/   docs/plans/implemented/
+discussion          decision (ADR)        plan                  implement              pull request
+docs/discussions/   docs/decisions/       docs/plans/           docs/plans/            docs/pull-requests-description/
+DISC_NNN-<slug>.md  NNN-<slug>.md         pending/NNN-<slug>.md implemented/NNN-<slug>.md  PR_NNN-<slug>.md
 ```
 
 1. **Discuss** -- the discussion-architect creates
@@ -30,6 +31,10 @@ docs/discussions/   docs/decisions/       docs/plans/pending/   docs/plans/imple
    `docs/plans/pending/NNN-<slug>.md`.
 3. **Implement** -- the implementer agent executes the plan, verifies it, then
    moves the plan to `docs/plans/implemented/`.
+4. **Pull Request** -- before a branch is merged, a PR description is authored
+   from `docs/templates/pull-request-template.md` into
+   `docs/pull-requests-description/PR_NNN-<slug>.md` documenting the
+   source → target diff, breaking changes, and verification.
 
 ### Paths & Status
 
@@ -39,11 +44,12 @@ docs/discussions/   docs/decisions/       docs/plans/pending/   docs/plans/imple
 | Decision (ADR) | `docs/decisions/NNN-<slug>.md` | Accepted / Proposed / Deprecated / Superseded |
 | Plan (pending) | `docs/plans/pending/NNN-<slug>.md` | Pending / In Progress |
 | Plan (implemented) | `docs/plans/implemented/NNN-<slug>.md` | Completed |
+| PR description | `docs/pull-requests-description/PR_NNN-<slug>.md` | Draft / Ready for Review / Merged |
 | Templates | `docs/templates/*-template.md` | — |
 
 `NNN` is a zero-padded sequence number. Discussions use the `DISC_` prefix
-(`DISC_NNN-`, numbered independently); decisions and their plans share a
-single `NNN` sequence.
+(`DISC_NNN-`, numbered independently); decisions, plans, and PR descriptions
+share a single `NNN` sequence.
 
 ## Rule Files
 
@@ -54,6 +60,7 @@ global instructions (also reachable via the `.opencode/rules/` symlink):
 - `discussion-workflow.md` -- how discussions are initiated and iterated.
 - `decision-workflow.md` -- how ADRs are created and sequenced.
 - `plan-workflow.md` -- how plans are implemented and completed.
+- `pull-request-workflow.md` -- how PR descriptions are authored and retained.
 
 ## Convention Source of Truth
 

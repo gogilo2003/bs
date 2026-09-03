@@ -58,9 +58,11 @@ Once the discussion is approved (converged and accepted), do the following:
 
 ## Rules
 
-- Always place discussions, decisions, and plans in their canonical paths.
+- Always place discussions, decisions, plans, and PR descriptions in their
+  canonical paths (see `pull-request-workflow.md` for PR descriptions).
 - Use the provided templates — do not invent ad-hoc formats.
-- Decision numbers must be unique and match between the decision and its plan.
+- Decision numbers must be unique and match between the decision, its plan, and
+  (later) its PR description.
 - Do not implement code. You only discuss, decide, and plan. Implementation is
   handled by the **implementer agent**.
 - Read the project context in `.agents/project/architecture.md` so discussion

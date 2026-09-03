@@ -18,6 +18,9 @@ discussions.
 - Every ADR must reference its implementation plan in
   `docs/plans/pending/NNN-<slug>.md`.
 - Every ADR must have a unique zero-padded sequence number (`NNN`).
+- The `NNN` sequence is shared between decisions, plans, and PR descriptions
+  (`docs/pull-requests-description/PR_NNN-<slug>.md`) so designed changes stay
+  linked across all artifacts.
 - Every ADR must use the format in `docs/templates/decision-template.md`:
   Title, Date, Status, Source Discussion, Implementation Plan, Context,
   Decision, Alternatives Considered, Consequences, Verification.
